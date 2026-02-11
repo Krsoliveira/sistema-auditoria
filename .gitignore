@@ -1,0 +1,20 @@
+# Pastas Legadas / Backups Locais
+SIAI_Modern/
+
+# Java / Spring
+**/target/
+**/*.class
+**/mvnw.cmd
+**/.mvn/
+
+# React / Node (Vite)
+**/node_modules/
+**/dist/
+.env.local
+
+# IDEs e Sistema
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
