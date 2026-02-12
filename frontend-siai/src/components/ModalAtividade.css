@@ -1,0 +1,185 @@
+/* src/components/ModalAtividade.css */
+
+/* Variáveis de Design - Alterar aqui muda tudo */
+:root {
+  --modal-primary: #004a8d; /* Azul da sua marca */
+  --modal-bg: #f8fafc;      /* Fundo gelo muito suave */
+  --modal-border: #e2e8f0;  /* Bordas sutis */
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --input-bg: #ffffff;
+  --input-readonly: #f1f5f9;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6); /* Backdrop escuro e moderno */
+  backdrop-filter: blur(4px); /* Efeito de desfoque no fundo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+/* Janela Principal */
+.modal-window {
+  background: var(--modal-bg);
+  width: 95%;
+  max-width: 1400px;
+  height: 90vh; /* Ocupa 90% da altura da tela */
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Importante para o header ficar fixo */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- HEADER FIXO (Azul) --- */
+.modal-header {
+  background: var(--modal-primary);
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
+.btn-close { 
+  background: rgba(255,255,255,0.1); border: none; color: white; 
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 18px; 
+  display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+.btn-close:hover { background: rgba(255,255,255,0.3); }
+
+/* --- CORPO COM SCROLL (Aqui está o segredo do espaço) --- */
+.modal-body-scroll {
+  flex: 1; /* Ocupa todo o espaço disponível */
+  overflow-y: auto; /* Permite rolar se tiver muitos blocos */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- ESTILO DOS BLOCOS --- */
+.content-block {
+  background: white;
+  border: 1px solid var(--modal-border);
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  position: relative;
+}
+
+/* Título de cada bloco (Etiqueta elegante) */
+.block-label {
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: var(--modal-primary);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Inputs Gerais */
+.form-row { display: flex; gap: 15px; margin-bottom: 0; }
+.form-col { display: flex; flex-direction: column; }
+.form-col label { font-size: 11px; font-weight: 700; color: var(--text-light); margin-bottom: 4px; }
+.form-col input, .form-col textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text-dark);
+  background: var(--input-bg);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.form-col input:focus, .form-col textarea:focus {
+  border-color: var(--modal-primary);
+  box-shadow: 0 0 0 3px rgba(0, 74, 141, 0.1);
+  outline: none;
+}
+.input-read { background: var(--input-readonly) !important; color: #64748b; border-color: #e2e8f0; }
+.input-bold { font-weight: 700; color: #0f172a; }
+
+/* === BLOCO 1: CABEÇALHO (Grid) === */
+.header-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr 1fr 120px;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+/* === BLOCO 2: ATIVIDADES (Horizontal Flow) === */
+.activity-container {
+  display: flex;
+  gap: 8px;
+  height: 280px; /* Altura fixa para ficar bonito */
+  margin-top: 5px;
+}
+
+/* Colunas do Grid de Atividade */
+.col-mini { width: 50px; text-align: center; }
+.col-std { width: 16%; min-width: 140px; }
+.col-date { width: 120px; }
+.col-wide { flex: 1; } /* Ocupa o resto */
+
+.full-h-input { height: 100%; resize: none; }
+.date-box { display: flex; flex-direction: column; gap: 5px; height: 100%; }
+.date-box input { font-size: 11px; }
+
+/* === ESPAÇO PARA OS NOVOS BLOCOS === */
+.placeholder-block {
+  border: 2px dashed #cbd5e1;
+  background: #f8fafc;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* === RODAPÉ DE AÇÃO === */
+.modal-footer {
+  background: white;
+  border-top: 1px solid var(--modal-border);
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-user { display: flex; align-items: center; gap: 10px; color: var(--text-dark); }
+.avatar-circle { 
+  width: 32px; height: 32px; background: #e0f2fe; color: #0369a1; 
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; 
+}
+
+.footer-actions { display: flex; gap: 10px; }
+
+.btn-sec { 
+  background: white; border: 1px solid #cbd5e1; color: var(--text-dark); 
+  padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.btn-sec:hover { background: #f1f5f9; }
+
+.btn-primary { 
+  background: var(--modal-primary); border: none; color: white; 
+  padding: 8px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; 
+  box-shadow: 0 4px 6px -1px rgba(0, 74, 141, 0.3); transition: 0.2s;
+}
+.btn-primary:hover { background: #003366; transform: translateY(-1px); }
