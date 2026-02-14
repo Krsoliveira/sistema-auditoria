@@ -1,61 +1,42 @@
 /* src/Login.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-/* 1. O Fundo com Imagem e Overlay */
 .login-container {
   height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Imagem de fundo de alta qualidade (arquitetura moderna) */
-  background: url('https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
-  background-size: cover;
-  position: relative;
-  font-family: 'Inter', sans-serif; /* Fonte mais moderna */
+  /* Fundo gradiente elegante usando as cores escuras da paleta */
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-black) 100%);
+  font-family: 'Inter', sans-serif;
 }
 
-/* Camada escura sobre a imagem para dar leitura */
-.login-container::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.6); /* Azul marinho escuro com transparência */
-  z-index: 0;
-}
-
-/* 2. O Card de Login (Efeito Vidro Moderno) */
 .login-card {
-  position: relative;
-  z-index: 1; /* Fica acima do overlay */
-  background: rgba(255, 255, 255, 0.9); /* Branco translúcido */
-  backdrop-filter: blur(12px); /* O efeito de vidro jateado! */
+  background: var(--color-bg-main); /* Branco puro */
   padding: 48px;
-  border-radius: 24px; /* Bordas bem arredondadas */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Borda sutil brilhante */
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Sombra profunda e suave */
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Sombra mais dramática */
   width: 100%;
   max-width: 420px;
   text-align: center;
+  border-top: 4px solid var(--color-accent-gold); /* Detalhe dourado no topo */
 }
 
-/* 3. Tipografia e Cores */
 .login-title {
-  color: #1e293b; /* Cinza chumbo escuro, mais elegante que preto */
-  font-size: 36px;
+  color: var(--color-primary-dark); /* Azul escuro */
+  font-size: 32px;
   margin-bottom: 8px;
   font-weight: 800;
-  letter-spacing: -1px;
 }
 
 .login-subtitle {
-  color: #64748b; /* Cinza azulado */
+  color: var(--color-text-secondary);
   font-size: 16px;
   margin-bottom: 40px;
   font-weight: 500;
 }
 
-/* 4. Campos de Input */
 .input-group {
   text-align: left;
   margin-bottom: 24px;
@@ -63,56 +44,56 @@
 
 .input-group label {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #334155;
+  color: var(--color-primary-dark);
   margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .input-group input {
   width: 100%;
   padding: 14px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
+  border: 2px solid var(--color-border-subtle); /* Cinza claro */
+  border-radius: 8px;
   font-size: 16px;
-  background: #f8fafc;
+  background: var(--color-bg-light); /* Fundo do input cinza claro */
   transition: all 0.3s ease;
+  color: var(--color-text-primary);
   box-sizing: border-box;
 }
 
-/* Efeito ao clicar no campo */
 .input-group input:focus {
-  border-color: #0ea5e9; /* Azul celeste vibrante */
-  background: #fff;
+  border-color: var(--color-accent-gold); /* Foco Dourado */
+  background: var(--color-bg-main);
   outline: none;
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); /* Anel de brilho suave */
+  box-shadow: 0 0 0 4px rgba(252, 163, 17, 0.2); /* Glow dourado suave */
 }
 
-/* 5. O Botão Moderno */
 .btn-login {
   width: 100%;
   padding: 16px;
-  /* Gradiente moderno */
-  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-  color: white;
+  /* Botão principal Dourado */
+  background: var(--color-accent-gold);
+  color: var(--color-primary-dark); /* Texto azul escuro no botão dourado para contraste */
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 4px 15px rgba(252, 163, 17, 0.3);
 }
 
-/* Efeito ao passar o mouse no botão */
 .btn-login:hover {
-  transform: translateY(-2px); /* Leve elevação */
-  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
-  background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  background: #e59100; /* Um tom ligeiramente mais escuro do dourado para hover */
+  box-shadow: 0 10px 20px rgba(252, 163, 17, 0.4);
 }
 
 .login-footer {
   margin-top: 32px;
-  color: #94a3b8;
+  color: var(--color-text-secondary);
   font-size: 13px;
 }

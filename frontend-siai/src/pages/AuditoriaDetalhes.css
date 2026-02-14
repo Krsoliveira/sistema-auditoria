@@ -1,224 +1,188 @@
 /* src/pages/AuditoriaDetalhes.css */
 
-/* Container Principal */
+/* Layout Geral */
 .audit-details-container {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 40px);
-  gap: 15px;
+  gap: 20px;
   max-width: 1600px;
   margin: 0 auto;
   font-family: 'Inter', sans-serif;
+  padding: 10px;
 }
 
-.top-actions {
-  padding-bottom: 5px;
-}
-
-/* === BLOCO DE CONTROLE SUPERIOR === */
-.control-block {
-  background: white;
-  padding: 20px;
+/* === NOVO CABEÇALHO UNIFICADO === */
+.audit-info-header {
+  background: var(--color-bg-main);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  border-top: 4px solid #004a8d;
+  padding: 25px 35px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* Estica para a linha divisória ficar altura total */
+  gap: 40px;
+  
+  /* Borda Lateral Dourada */
+  border-left: 6px solid var(--color-accent-gold);
 }
 
-.block-title {
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: #334155;
-  font-weight: 700;
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 10px;
-}
-
-/* Grid de 4 colunas para os campos */
-.control-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.form-group {
+/* --- LADO ESQUERDO: TÍTULO --- */
+.header-left-section {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  min-width: 320px;
 }
 
-.form-group label {
-  font-size: 11px;
+.header-top-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 8px;
+}
+
+.btn-back-link {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 12px;
   font-weight: 700;
-  color: #64748b;
-  margin-bottom: 6px;
   text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  transition: color 0.2s;
+}
+.btn-back-link:hover { color: var(--color-accent-gold); }
+.arrow { font-size: 14px; margin-top: -2px; }
+
+.status-pill {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 12px;
   letter-spacing: 0.5px;
 }
+.status-pill.aberto { background: rgba(252, 163, 17, 0.15); color: #92400e; }
+.status-pill.finalizado { background: #d1fae5; color: #065f46; }
 
-/* Estilo dos Inputs */
-.control-grid input, 
-.control-grid select {
-  padding: 10px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+.audit-id-title {
+  margin: 0;
+  font-size: 28px;
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.audit-report-name {
+  margin: 4px 0 0 0;
+  color: var(--color-text-secondary);
   font-size: 14px;
-  color: #1e293b;
-  background-color: #fff;
-  transition: all 0.2s;
-  height: 42px; /* Altura fixa para alinhar */
+  font-weight: 500;
 }
 
-.control-grid input:focus, 
-.control-grid select:focus {
-  border-color: #0ea5e9;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+/* --- DIVISOR VERTICAL --- */
+.header-vertical-divider {
+  width: 1px;
+  background-color: var(--color-border-subtle);
+  margin: 5px 0; /* Pequeno respiro vertical */
 }
 
-/* Campos Leitura e Destaque */
-.input-readonly {
-  background-color: #f8fafc !important;
-  color: #64748b !important;
-  cursor: default;
-  border-color: #e2e8f0 !important;
+/* --- LADO DIREITO: GRID DE DADOS --- */
+.header-right-grid {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: center;
+  justify-content: flex-end; /* Alinha à direita */
 }
 
-.input-highlight {
-  background-color: #f0f9ff !important;
-  color: #0369a1 !important;
-  font-weight: 600;
-  border-color: #bae6fd !important;
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
 }
 
-/* --- CORREÇÃO DO CALENDÁRIO --- */
-/* Garante que o ícone do calendário apareça e seja clicável */
-input[type="date"] {
-  position: relative;
-  cursor: pointer;
+.info-item label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  filter: invert(0.4); /* Deixa o ícone cinza escuro para melhor contraste */
-  font-size: 18px;
+.info-item span {
+  font-size: 15px;
+  color: var(--color-primary-dark);
+  font-weight: 700;
 }
 
-input[type="date"]:hover::-webkit-calendar-picker-indicator {
-  filter: invert(24%) sepia(96%) saturate(1779%) hue-rotate(191deg) brightness(96%) contrast(101%); /* Azul no hover */
-}
-
-/* === ÁREA CENTRAL (Split View) === */
+/* === TABELA === */
 .audit-content-split {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 15px;
-  overflow: hidden;
-}
-
-/* Tabela Scrollável */
-.table-panel {
-  flex: 3; /* Ocupa a maior parte */
-  background: white;
+  display: flex; flex-direction: column; flex: 1; overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.table-panel {
+  flex: 1;
+  background: var(--color-bg-main);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.table-scroll {
-  overflow-y: auto;
-  flex: 1;
-}
+.table-scroll { overflow-y: auto; flex: 1; }
 
-.modern-table {
-  width: 100%;
-  border-collapse: collapse;
-  white-space: nowrap; /* Evita quebra de linha nas colunas curtas */
-}
+.modern-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
 
 .modern-table th {
-  background: #f1f5f9;
-  color: #475569;
-  padding: 12px 16px;
+  background: var(--color-primary-dark);
+  color: white;
+  padding: 16px 20px;
   text-align: left;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  border-bottom: 2px solid #e2e8f0;
+  position: sticky; top: 0; z-index: 10;
 }
 
 .modern-table td {
-  padding: 10px 16px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border-subtle);
   font-size: 13px;
-  color: #334155;
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: background 0.1s;
 }
 
-.modern-table tr:hover {
-  background-color: #f8fafc;
-}
+.modern-table tr:hover { background-color: var(--color-bg-light); }
 
-.modern-table tr.selected {
-  background-color: #e0f2fe;
-  border-left: 4px solid #0ea5e9;
-}
-
-/* Badges de Status na Tabela */
 .badge-sm {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+    padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase;
 }
-.badge-sm.aberto { background: #fef9c3; color: #854d0e; }
-.badge-sm.em-andamento { background: #dbeafe; color: #1e40af; }
-.badge-sm.concluido { background: #dcfce7; color: #166534; }
+.badge-sm.aberto { background: #fff7ed; color: #9a3412; }
+.badge-sm.em-andamento { background: #eff6ff; color: #1e40af; }
+.badge-sm.concluido { background: #f0fdf4; color: #15803d; }
 
-/* Truncar texto longo na tabela */
 .truncate-text {
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #64748b;
-  font-style: italic;
+  max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-secondary); font-style: italic;
 }
 
-/* === PAINEL INFERIOR (Anotação) === */
-.details-panel {
-  flex: 1; /* Tamanho fixo menor */
-  min-height: 150px;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-}
-
-.observation-box {
-  width: 100%;
-  flex: 1;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 15px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: #334155;
-  resize: none;
-  outline: none;
-}
-
-.observation-box:focus {
-  border-color: #0ea5e9;
-  background: #fff;
+.table-footer-hint {
+  padding: 12px 20px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-align: right;
+  background: var(--color-bg-light);
+  border-top: 1px solid var(--color-border-subtle);
 }

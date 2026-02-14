@@ -1,68 +1,41 @@
+/* src/index.css */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* --- PALETA "BLACK AND GOLD ELEGANCE" --- */
+  
+  /* Cores Principais */
+  --color-primary-dark: #14213D;  /* Azul Noturno (Para Sidebars, Headers) */
+  --color-accent-gold: #FCA311;   /* Ouro/Laranja (Para Botões de Ação, Destaques) */
+  --color-black: #000000;         /* Preto Puro (Para Textos Fortes, Overlays) */
+  
+  /* Fundos e Neutros */
+  --color-bg-main: #FFFFFF;       /* Branco Puro (Fundo de conteúdo) */
+  --color-bg-light: #E5E5E5;      /* Cinza Claro (Fundo de tela, bordas sutis) */
+  
+  /* Variações Funcionais (Derivadas da paleta) */
+  --color-text-on-dark: #FFFFFF;
+  --color-text-primary: #14213D;  /* Usando o azul escuro para texto padrão para suavizar o preto */
+  --color-text-secondary: #666666; /* Um cinza médio para subtítulos (baseado no E5E5E5 mas mais escuro) */
+  
+  --color-border-subtle: #E5E5E5;
+  --color-border-accent: #FCA311;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  /* Status (Mantendo padrão semântico, mas ajustado) */
+  --color-success: #10b981; /* Verde (mantido para "Concluído") */
+  --color-warning: #FCA311; /* O próprio Dourado serve para "Atenção" */
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-light); /* Fundo geral cinza claro */
+  color: var(--color-text-primary);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
