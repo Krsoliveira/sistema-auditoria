@@ -1,35 +1,36 @@
 /* src/pages/AuditoriaDetalhes.css */
 
-/* Layout Geral */
+/* === LAYOUT GERAL DA PÁGINA === */
 .audit-details-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 40px); /* Altura total menos margens */
   gap: 20px;
   max-width: 1600px;
   margin: 0 auto;
-  font-family: 'Inter', sans-serif;
   padding: 10px;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
 }
 
-/* === NOVO CABEÇALHO UNIFICADO === */
+/* === CABEÇALHO DE INFORMAÇÕES (UNIFICADO) === */
 .audit-info-header {
-  background: var(--color-bg-main);
-  border: 1px solid var(--color-border-subtle);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 25px 35px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.04);
   
   display: flex;
   justify-content: space-between;
-  align-items: stretch; /* Estica para a linha divisória ficar altura total */
+  align-items: stretch; /* Faz o divisor vertical esticar */
   gap: 40px;
   
-  /* Borda Lateral Dourada */
-  border-left: 6px solid var(--color-accent-gold);
+  /* Detalhe Premium Lateral */
+  border-left: 6px solid #FCA311; /* Dourado */
 }
 
-/* --- LADO ESQUERDO: TÍTULO --- */
+/* Lado Esquerdo: Títulos e Botão Voltar */
 .header-left-section {
   display: flex;
   flex-direction: column;
@@ -47,7 +48,7 @@
 .btn-back-link {
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: #64748b;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -58,8 +59,9 @@
   padding: 0;
   transition: color 0.2s;
 }
-.btn-back-link:hover { color: var(--color-accent-gold); }
-.arrow { font-size: 14px; margin-top: -2px; }
+.btn-back-link:hover {
+  color: #FCA311;
+}
 
 .status-pill {
   font-size: 10px;
@@ -70,31 +72,32 @@
   letter-spacing: 0.5px;
 }
 .status-pill.aberto { background: rgba(252, 163, 17, 0.15); color: #92400e; }
-.status-pill.finalizado { background: #d1fae5; color: #065f46; }
+.status-pill.em-andamento { background: #eff6ff; color: #1e40af; }
+.status-pill.concluido { background: #d1fae5; color: #065f46; }
 
 .audit-id-title {
   margin: 0;
   font-size: 28px;
-  color: var(--color-primary-dark);
+  color: #14213D; /* Azul Noturno */
   font-weight: 800;
   letter-spacing: -1px;
 }
 
 .audit-report-name {
   margin: 4px 0 0 0;
-  color: var(--color-text-secondary);
+  color: #64748b;
   font-size: 14px;
   font-weight: 500;
 }
 
-/* --- DIVISOR VERTICAL --- */
+/* Divisor Vertical Fino */
 .header-vertical-divider {
   width: 1px;
-  background-color: var(--color-border-subtle);
-  margin: 5px 0; /* Pequeno respiro vertical */
+  background-color: #e2e8f0;
+  margin: 5px 0;
 }
 
-/* --- LADO DIREITO: GRID DE DADOS --- */
+/* Lado Direito: Grid de Informações */
 .header-right-grid {
   flex: 1;
   display: flex;
@@ -114,75 +117,195 @@
 .info-item label {
   font-size: 11px;
   font-weight: 800;
-  color: var(--color-text-secondary);
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .info-item span {
   font-size: 15px;
-  color: var(--color-primary-dark);
+  color: #14213D;
   font-weight: 700;
 }
 
-/* === TABELA === */
+/* === ÁREA DA TABELA (BOX BRANCO) === */
 .audit-content-split {
-  display: flex; flex-direction: column; flex: 1; overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ocupa o resto da altura da tela */
+  overflow: hidden;
   border-radius: 12px;
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid #e2e8f0;
   box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  background: white;
 }
 
+/* === BARRA DE FERRAMENTAS (TOOLBAR) === */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc; /* Fundo cinza bem claro */
+  min-height: 50px;
+}
+
+.toolbar-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Botões da Toolbar */
+.btn-toolbar {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-toolbar:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.btn-toolbar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f3f4f6;
+  box-shadow: none;
+}
+
+/* Botão Primário (Editar) */
+.btn-toolbar.primary {
+  background: #14213D;
+  color: white;
+  border-color: #14213D;
+}
+.btn-toolbar.primary:hover:not(:disabled) {
+  background: #1e293b;
+  border-color: #1e293b;
+}
+
+/* Divisor pequeno na toolbar */
+.divider-small {
+  width: 1px;
+  height: 20px;
+  background: #cbd5e1;
+  margin: 0 5px;
+}
+
+/* === PAINEL DA TABELA === */
 .table-panel {
   flex: 1;
-  background: var(--color-bg-main);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.table-scroll { overflow-y: auto; flex: 1; }
+.table-scroll {
+  overflow-y: auto;
+  flex: 1;
+}
 
-.modern-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
 
+/* Cabeçalho da Tabela */
 .modern-table th {
-  background: var(--color-primary-dark);
+  background: #14213D; /* Azul Noturno */
   color: white;
-  padding: 16px 20px;
+  padding: 12px 20px;
   text-align: left;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  position: sticky; top: 0; z-index: 10;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
+/* Linhas da Tabela */
 .modern-table td {
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--color-border-subtle);
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e8f0;
   font-size: 13px;
-  color: var(--color-text-primary);
+  color: #334155;
   cursor: pointer;
   transition: background 0.1s;
 }
 
-.modern-table tr:hover { background-color: var(--color-bg-light); }
+/* Hover na linha */
+.clickable-row:hover {
+  background-color: #f8fafc;
+}
 
+/* === LINHA SELECIONADA (Highlight Dourado) === */
+.selected-row {
+  background-color: #fffbeb !important; /* Amarelo muito suave */
+  border-left: 4px solid #FCA311; /* Borda esquerda dourada */
+}
+
+.selected-row td {
+  color: #14213D;
+  font-weight: 600;
+}
+
+/* Ajuste para a primeira célula não "pular" com a borda */
+.selected-row td:first-child {
+  padding-left: 16px; /* Compensa os 4px da borda */
+}
+
+/* === BADGES DE STATUS === */
 .badge-sm {
-    padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
-.badge-sm.aberto { background: #fff7ed; color: #9a3412; }
-.badge-sm.em-andamento { background: #eff6ff; color: #1e40af; }
-.badge-sm.concluido { background: #f0fdf4; color: #15803d; }
+.badge-sm.aberto { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+.badge-sm.em-andamento { background: #eff6ff; color: #1e40af; border: 1px solid #dbeafe; }
+.badge-sm.concluido { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
 
+/* Utilitário de Texto Truncado */
 .truncate-text {
-  max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-secondary); font-style: italic;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #64748b;
+  font-style: italic;
 }
 
+/* Rodapé da Tabela (Dica) */
 .table-footer-hint {
-  padding: 12px 20px;
-  font-size: 12px;
-  color: var(--color-text-secondary);
+  padding: 10px 20px;
+  font-size: 11px;
+  color: #64748b;
   text-align: right;
-  background: var(--color-bg-light);
-  border-top: 1px solid var(--color-border-subtle);
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
 }
