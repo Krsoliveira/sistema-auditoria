@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AuditoriaForm from './pages/AuditoriaForm'; // Tela de Nova Auditoria
 import AuditoriaDetalhes from './pages/AuditoriaDetalhes'; // Tela de Detalhes (VERIFIQUE SE ESTE ARQUIVO EXISTE)
+import AlterarSenha from './pages/AlterarSenha';
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
         
         {/* Rota 4: Ver Detalhes (O :id é a chave mágica!) */}
         <Route path="/auditoria/:id" element={<AuditoriaDetalhes />} />
+        {/* Rota 5: Alterar Senha */}
+        <Route path="/alterar-senha" element={<AlterarSenha />} />        
+
       </Routes>
     </Router>
   );

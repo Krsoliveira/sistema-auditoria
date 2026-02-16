@@ -1,19 +1,54 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../Login.css'; // Vamos criar esse CSS específico já já
+import '../Login.css';
 
 const Login = () => {
-  const [usuario, setUsuario] = useState('');
+  // Mudamos de "usuario" para "matricula" para bater com o Java
+  const [matricula, setMatricula] = useState('');
   const [senha, setSenha] = useState('');
+  
+  // Novos estados para controlar o carregamento e erros
+  const [erro, setErro] = useState('');
+  const [carregando, setCarregando] = useState(false);
+  
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Por enquanto, aceita qualquer coisa só para testar o fluxo
-    if (usuario && senha) {
-      navigate('/dashboard'); // Manda para a próxima tela
-    } else {
-      alert('Preencha usuário e senha!');
+    setErro(''); // Limpa erros anteriores
+    setCarregando(true); // Ativa o "Carregando..."
+
+    try {
+      // 1. Faz a chamada real para o seu Backend Java
+      const response = await fetch('http://localhost:8080/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // O Java espera receber "matricula" e "senha"
+        body: JSON.stringify({ 
+            matricula: matricula, 
+            senha: senha 
+        })
+      });
+
+      // 2. Verifica a resposta
+      if (response.ok) {
+        // Sucesso! (Status 200)
+        const dadosUsuario = await response.json();
+        
+        // Salva os dados no navegador (opcional, mas bom para mostrar o nome depois)
+        localStorage.setItem('usuarioLogado', JSON.stringify(dadosUsuario));
+        
+        navigate('/dashboard'); // Manda para o sistema
+      } else {
+        // Erro (Status 401 ou 403)
+        setErro('Matrícula ou senha incorretos.');
+      }
+
+    } catch (error) {
+      console.error('Erro de conexão:', error);
+      setErro('Sem conexão com o servidor. O Backend está rodando?');
+    } finally {
+      setCarregando(false); // Destrava o botão
     }
   };
 
@@ -25,12 +60,13 @@ const Login = () => {
         
         <form onSubmit={handleLogin}>
           <div className="input-group">
-            <label>Usuário</label>
+            <label>Matrícula</label>
             <input 
               type="text" 
-              placeholder="Ex: k.oliveira"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
+              placeholder="Ex: 28685"
+              value={matricula}
+              onChange={(e) => setMatricula(e.target.value)}
+              required
             />
           </div>
           
@@ -41,10 +77,20 @@ const Login = () => {
               placeholder="••••••••"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
+              required
             />
           </div>
 
-          <button type="submit" className="btn-login">Entrar</button>
+          {/* Área de Mensagem de Erro (Só aparece se tiver erro) */}
+          {erro && (
+            <div style={{ color: 'red', marginBottom: '15px', fontSize: '14px', textAlign: 'center' }}>
+                {erro}
+            </div>
+          )}
+
+          <button type="submit" className="btn-login" disabled={carregando}>
+            {carregando ? 'Entrando...' : 'Entrar'}
+          </button>
         </form>
         
         <div className="login-footer">

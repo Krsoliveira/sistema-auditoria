@@ -1,13 +1,13 @@
-// src/pages/Dashboard.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../Dashboard.css'; // Certifique-se de que o CSS está na pasta src
+import '../Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  // Dados fictícios (MOCK) para visualizar o layout
-  // Note que os IDs (1, 2, 3) serão usados para abrir a tela de detalhes correta
+  // PEGA OS DADOS DO USUÁRIO QUE SALVAMOS NO LOGIN
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+
   const auditoriasRecentes = [
     { id: 1, unidade: 'Loja Jataí', data: '10/02/2026', status: 'Em Andamento', tipo: 'Planejado' },
     { id: 2, unidade: 'Insumos Rio Verde', data: '08/02/2026', status: 'Finalizado', tipo: 'Sindicância' },
@@ -26,11 +26,21 @@ const Dashboard = () => {
         <nav className="sidebar-nav">
           <button className="nav-item active">📊 Visão Geral</button>
           <button className="nav-item">📋 Minhas Auditorias</button>
-          <button className="nav-item">⚙️ Configurações</button>
+          
+          {/* BOTÃO PARA ALTERAR SENHA ADICIONADO AQUI NO MENU */}
+          <button 
+            className="nav-item" 
+            onClick={() => navigate('/alterar-senha')}
+          >
+            ⚙️ Alterar Senha
+          </button>
         </nav>
 
         <div className="sidebar-footer">
-          <button onClick={() => navigate('/')} className="logout-btn">Sair</button>
+          <button onClick={() => {
+            localStorage.removeItem('usuarioLogado'); // Limpa o login ao sair
+            navigate('/');
+          }} className="logout-btn">Sair</button>
         </div>
       </aside>
 
@@ -38,10 +48,10 @@ const Dashboard = () => {
       <main className="main-content">
         <header className="top-bar">
           <div className="welcome-text">
-            <h1>Olá, Auditor</h1>
+            {/* EXIBE O NOME REAL DO USUÁRIO DO BANCO */}
+            <h1>Olá, {usuarioLogado?.nomeCompleto || 'Auditor'}</h1>
             <p>Aqui está o resumo das suas atividades.</p>
           </div>
-          {/* Botão que leva para criar uma NOVA auditoria */}
           <button className="btn-nova-auditoria" onClick={() => navigate('/auditoria')}>
             + Nova Auditoria
           </button>
@@ -92,8 +102,6 @@ const Dashboard = () => {
                       </span>
                     </td>
                     <td>
-                      {/* --- AQUI ESTÁ A MUDANÇA IMPORTANTE --- */}
-                      {/* Ao clicar, ele navega para /auditoria/1, /auditoria/2, etc. */}
                       <button 
                         className="btn-detalhes" 
                         onClick={() => navigate(`/auditoria/${item.id}`)}

@@ -1,0 +1,103 @@
+.change-password-container {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.change-password-container h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.change-password-container .input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.change-password-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #444;
+    font-size: 0.9rem;
+}
+
+.change-password-container input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Garante que o padding não estoure a largura */
+    transition: border-color 0.3s ease;
+}
+
+.change-password-container input:focus {
+    border-color: #FCA311; /* Cor de destaque do seu sistema */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.1);
+}
+
+.change-password-container .btn-save {
+    width: 100%;
+    padding: 12px;
+    background-color: #14213D; /* Azul escuro do padrão */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.change-password-container .btn-save:hover {
+    background-color: #FCA311;
+    color: #14213D;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.message.erro {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.message.sucesso {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.btn-voltar-link {
+    background: none;
+    border: none;
+    color: #666;
+    padding: 0;
+    margin-bottom: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.btn-voltar-link:hover {
+    color: #FCA311; /* Cor laranja de destaque do seu sistema */
+    text-decoration: underline;
+}

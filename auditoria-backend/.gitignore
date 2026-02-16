@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+# Segurança: Não subir configurações com dados do Banco de Dados
+src/main/resources/application.properties
+
+# Logs do sistema
+*.log

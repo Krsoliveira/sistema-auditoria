@@ -7,133 +7,163 @@ const AuditoriaDetalhes = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // Estados
-  const [auditoria, setAuditoria] = useState(null);
-  const [selectedId, setSelectedId] = useState(null); // ID da linha selecionada (Visual)
-  const [atividadeParaEditar, setAtividadeParaEditar] = useState(null); // Dados para o Modal
+  // URL da API Java (Backend)
+  const API_URL = 'http://localhost:8080/api/atividades';
+
+  // --- ESTADOS ---
+  
+  // Cabeçalho (Fixo por enquanto, pois o banco traz apenas a lista de atividades)
+  const [cabecalho] = useState({
+      relatorioNome: 'Auditoria Operacional - Fábrica II',
+      numero: '2026.011',
+      unidade: id === '1' ? 'Loja Jataí' : 'Insumos Rio Verde',
+      grupo: 'IND - FÁBRICA DE RAÇÃO II',
+      situacao: 'EM ANDAMENTO', // Você pode ajustar isso dinamicamente depois se quiser
+      periodo: '27/01/2026 a 27/01/2026',
+      auditorLider: 'Kaique Oliveira'
+  });
+
+  const [listaAtividades, setListaAtividades] = useState([]); // Dados que vêm do Banco
+  const [selectedId, setSelectedId] = useState(null); 
+  const [atividadeParaEditar, setAtividadeParaEditar] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // --- 1. CARREGAR DADOS DO BACKEND ---
+  const carregarAtividades = async () => {
+    try {
+        setLoading(true);
+        const response = await fetch(API_URL);
+        if (response.ok) {
+            const data = await response.json();
+            setListaAtividades(data);
+        } else {
+            console.error("Erro ao buscar dados do Java");
+            alert("Erro ao carregar dados do servidor.");
+        }
+    } catch (error) {
+        console.error("Erro de conexão:", error);
+        alert("Erro de conexão com o Backend Java.");
+    } finally {
+        setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // --- MOCK DE DADOS ---
-    const dadosMock = {
-      cabecalho: {
-        relatorioNome: 'Auditoria Operacional - Fábrica II',
-        numero: '2026.011',
-        unidade: id === '1' ? 'Loja Jataí' : 'Insumos Rio Verde',
-        grupo: 'IND - FÁBRICA DE RAÇÃO II',
-        situacao: 'ABERTO',
-        periodo: '27/01/2026 a 27/01/2026',
-        auditorLider: 'Kaique Oliveira'
-      },
-      atividades: [
-        { item: 1, atividade: 'Recepção de matéria-prima', testes: 'Conferência de pesagem', extensao: '100%', amostragem: 'Tickets 12055', dtInicial: '2026-01-27', dtFinal: '2026-01-27', realizadoPor: 'Gabriel Vinicius', situacao: 'ABERTO', classificacao: 'Crítico', pendencia: 'Sim', anotacao: 'Necessário calibrar balança.', naoConformidade: '', reincidente: '', recomendacao: '', prazoSolucao: '', marcarPendencia: false, anotacaoGeral: '' },
-        { item: 2, atividade: 'Saída de produtos acabados', testes: '', extensao: '', amostragem: '', dtInicial: '2026-01-28', dtFinal: '2026-01-28', realizadoPor: 'Jonathas Almeida', situacao: 'EM ANDAMENTO', classificacao: 'Alto Risco', pendencia: 'Não', anotacao: '', naoConformidade: '', reincidente: '', recomendacao: '', prazoSolucao: '', marcarPendencia: false, anotacaoGeral: '' },
-        { item: 3, atividade: 'Controle de Senhas SAP R/3', testes: '', extensao: '', amostragem: '', dtInicial: '2026-02-03', dtFinal: '2026-02-03', realizadoPor: 'Júlio César', situacao: 'CONCLUIDO', classificacao: 'Baixo Risco', pendencia: 'Não', anotacao: '', naoConformidade: '', reincidente: '', recomendacao: '', prazoSolucao: '', marcarPendencia: false, anotacaoGeral: '' },
-      ]
-    };
-    setAuditoria(dadosMock);
-  }, [id]);
+    carregarAtividades();
+  }, []);
 
-  // 1. Clique Simples: SELECIONA A LINHA
+  // --- INTERAÇÕES ---
+
+  // Clique Simples: Seleciona
   const handleRowClick = (itemCode) => {
     setSelectedId(itemCode);
   };
 
-  // 2. Duplo Clique: ABRE O MODAL
+  // Duplo Clique: Abre Modal
   const handleRowDoubleClick = (row) => {
     setAtividadeParaEditar(row);
     setIsModalOpen(true);
   };
 
-  // 3. Botão Editar (Barra de Ferramentas)
+  // Botão Editar
   const handleEditSelected = () => {
-    if (!selectedId || !auditoria) return;
-    const row = auditoria.atividades.find(a => a.item === selectedId);
+    if (!selectedId) return;
+    const row = listaAtividades.find(a => a.item === selectedId);
     if (row) {
         setAtividadeParaEditar(row);
         setIsModalOpen(true);
     }
   };
 
-  // 4. Mover Selecionado (Cima/Baixo)
+  // Botão Mover (Visual apenas - O banco ordena por ID padrão)
   const handleMoveSelected = (direction) => {
-    if (!selectedId || !auditoria) return;
-
-    const lista = [...auditoria.atividades];
+    if (!selectedId) return;
+    const lista = [...listaAtividades];
     const index = lista.findIndex(a => a.item === selectedId);
     if (index === -1) return;
 
-    // Mover para CIMA
     if (direction === 'up' && index > 0) {
         [lista[index], lista[index - 1]] = [lista[index - 1], lista[index]];
     }
-    // Mover para BAIXO
     else if (direction === 'down' && index < lista.length - 1) {
         [lista[index], lista[index + 1]] = [lista[index + 1], lista[index]];
     }
-
-    setAuditoria({ ...auditoria, atividades: lista });
+    setListaAtividades(lista);
   };
 
-  const handleSaveModal = (atividadeAtualizada) => {
-    const novaLista = auditoria.atividades.map(a => 
-      a.item === atividadeAtualizada.item ? atividadeAtualizada : a
-    );
-    setAuditoria({ ...auditoria, atividades: novaLista });
-    setIsModalOpen(false);
+  // --- SALVAR NO BANCO DE DADOS ---
+  const handleSaveModal = async (atividadeAtualizada) => {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(atividadeAtualizada)
+        });
+
+        if (response.ok) {
+            // Sucesso! Recarrega a lista direto do banco para garantir
+            await carregarAtividades();
+            setIsModalOpen(false);
+        } else {
+            alert('Erro ao salvar no banco de dados!');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('Erro de conexão ao tentar salvar.');
+    }
   };
 
-  if (!auditoria) return <div className="loading">Carregando dados...</div>;
+  if (loading) return <div className="loading">Carregando dados do Banco SQL Server...</div>;
 
   return (
     <div className="audit-details-container">
       
-      {/* CABEÇALHO GERAL */}
+      {/* CABEÇALHO */}
       <section className="audit-info-header">
         <div className="header-left-section">
             <div className="header-top-row">
                 <button className="btn-back-link" onClick={() => navigate('/dashboard')}>
                     <span className="arrow">←</span> Voltar
                 </button>
-                <span className={`status-pill ${auditoria.cabecalho.situacao.toLowerCase()}`}>
-                    {auditoria.cabecalho.situacao}
+                <span className={`status-pill ${cabecalho.situacao === 'ABERTO' ? 'aberto' : 'em-andamento'}`}>
+                    {cabecalho.situacao}
                 </span>
             </div>
-            <h1 className="audit-id-title">Auditoria #{auditoria.cabecalho.numero}</h1>
-            <p className="audit-report-name">{auditoria.cabecalho.relatorioNome}</p>
+            <h1 className="audit-id-title">Auditoria #{cabecalho.numero}</h1>
+            <p className="audit-report-name">{cabecalho.relatorioNome}</p>
         </div>
         <div className="header-vertical-divider"></div>
         <div className="header-right-grid">
-            <div className="info-item"><label>Unidade</label><span>{auditoria.cabecalho.unidade}</span></div>
-            <div className="info-item"><label>Grupo</label><span>{auditoria.cabecalho.grupo}</span></div>
-            <div className="info-item"><label>Período</label><span>{auditoria.cabecalho.periodo}</span></div>
-            <div className="info-item"><label>Líder</label><span>{auditoria.cabecalho.auditorLider}</span></div>
+            <div className="info-item"><label>Unidade</label><span>{cabecalho.unidade}</span></div>
+            <div className="info-item"><label>Grupo</label><span>{cabecalho.grupo}</span></div>
+            <div className="info-item"><label>Período</label><span>{cabecalho.periodo}</span></div>
+            <div className="info-item"><label>Líder</label><span>{cabecalho.auditorLider}</span></div>
         </div>
       </section>
 
       {/* ÁREA DA TABELA */}
       <div className="audit-content-split">
         
-        {/* BARRA DE FERRAMENTAS (NOVA) */}
         <div className="table-toolbar">
             <div className="toolbar-left">
-                <span className="toolbar-title">Atividades ({auditoria.atividades.length})</span>
+                <span className="toolbar-title">Atividades ({listaAtividades.length})</span>
             </div>
             
             <div className="toolbar-actions">
                 <button 
                     className="btn-toolbar" 
                     onClick={() => handleMoveSelected('up')}
-                    disabled={!selectedId || auditoria.atividades[0].item === selectedId}
-                    title="Mover para Cima"
+                    disabled={!selectedId}
+                    title="Mover Acima"
                 >
                     ⬆ Mover Acima
                 </button>
                 <button 
                     className="btn-toolbar" 
                     onClick={() => handleMoveSelected('down')}
-                    disabled={!selectedId || auditoria.atividades[auditoria.atividades.length - 1].item === selectedId}
-                    title="Mover para Baixo"
+                    disabled={!selectedId}
+                    title="Mover Abaixo"
                 >
                     ⬇ Mover Abaixo
                 </button>
@@ -142,7 +172,7 @@ const AuditoriaDetalhes = () => {
                     className="btn-toolbar primary" 
                     onClick={handleEditSelected}
                     disabled={!selectedId}
-                    title="Editar Atividade Selecionada"
+                    title="Editar"
                 >
                     ✏️ Editar Detalhes
                 </button>
@@ -166,7 +196,7 @@ const AuditoriaDetalhes = () => {
                 </tr>
               </thead>
               <tbody>
-                {auditoria.atividades.map((row, index) => {
+                {listaAtividades.map((row, index) => {
                   const isSelected = selectedId === row.item;
                   return (
                     <tr 
@@ -179,13 +209,20 @@ const AuditoriaDetalhes = () => {
                         {index + 1}
                       </td>
                       <td><strong>{row.atividade}</strong></td>
+                      
+                      {/* Tratamento de datas para não quebrar se vier nulo */}
                       <td>{row.dtInicial ? new Date(row.dtInicial).toLocaleDateString('pt-BR', {timeZone: 'UTC'}) : ''}</td>
                       <td>{row.dtFinal ? new Date(row.dtFinal).toLocaleDateString('pt-BR', {timeZone: 'UTC'}) : ''}</td>
+                      
                       <td>{row.realizadoPor}</td>
-                      <td><span className={`badge-sm ${row.situacao.toLowerCase().replace(' ', '-')}`}>{row.situacao}</span></td>
+                      <td>
+                          <span className={`badge-sm ${row.situacao ? row.situacao.toLowerCase().replace(' ', '-') : ''}`}>
+                            {row.situacao}
+                          </span>
+                      </td>
                       <td>{row.classificacao}</td>
                       <td style={{ color: row.pendencia === 'Sim' ? 'red' : 'green', fontWeight: 'bold' }}>{row.pendencia}</td>
-                      <td className="truncate-text" title={row.anotacao}>{row.anotacao || <em>(Sem anotação)</em>}</td>
+                      <td className="truncate-text" title={row.anotacao}>{row.anotacao}</td>
                     </tr>
                   );
                 })}
@@ -193,7 +230,7 @@ const AuditoriaDetalhes = () => {
             </table>
           </div>
           <div className="table-footer-hint">
-             ℹ️ Dica: Clique para selecionar. Duplo clique para editar. Use os botões acima para organizar.
+             ℹ️ Dica: Dados REAIS carregados do SQL Server! Duplo clique para editar e salvar.
           </div>
         </div>
       </div>
