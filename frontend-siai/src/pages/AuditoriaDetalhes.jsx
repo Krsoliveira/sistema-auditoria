@@ -1,250 +1,178 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ModalAtividade from '../components/ModalAtividade';
-import './AuditoriaDetalhes.css';
+import '../Dashboard.css'; // Usa o mesmo CSS do painel
 
 const AuditoriaDetalhes = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Pega o ID da URL (ex: 98)
   const navigate = useNavigate();
   
-  // URL da API Java (Backend)
-  const API_URL = 'http://localhost:8080/api/atividades';
-
-  // --- ESTADOS ---
-  
-  // Cabeçalho (Fixo por enquanto, pois o banco traz apenas a lista de atividades)
-  const [cabecalho] = useState({
-      relatorioNome: 'Auditoria Operacional - Fábrica II',
-      numero: '2026.011',
-      unidade: id === '1' ? 'Loja Jataí' : 'Insumos Rio Verde',
-      grupo: 'IND - FÁBRICA DE RAÇÃO II',
-      situacao: 'EM ANDAMENTO', // Você pode ajustar isso dinamicamente depois se quiser
-      periodo: '27/01/2026 a 27/01/2026',
-      auditorLider: 'Kaique Oliveira'
-  });
-
-  const [listaAtividades, setListaAtividades] = useState([]); // Dados que vêm do Banco
-  const [selectedId, setSelectedId] = useState(null); 
-  const [atividadeParaEditar, setAtividadeParaEditar] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // --- 1. CARREGAR DADOS DO BACKEND ---
-  const carregarAtividades = async () => {
-    try {
-        setLoading(true);
-        const response = await fetch(API_URL);
-        if (response.ok) {
-            const data = await response.json();
-            setListaAtividades(data);
-        } else {
-            console.error("Erro ao buscar dados do Java");
-            alert("Erro ao carregar dados do servidor.");
-        }
-    } catch (error) {
-        console.error("Erro de conexão:", error);
-        alert("Erro de conexão com o Backend Java.");
-    } finally {
-        setLoading(false);
-    }
-  };
+  // Estados para armazenar os dados
+  const [relatorio, setRelatorio] = useState(null);
+  const [atividades, setAtividades] = useState([]);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    carregarAtividades();
-  }, []);
+    // 1. Busca a Capa do Relatório (Nome, Gestor, Data)
+    fetch(`http://localhost:8080/api/relatorios/${id}`)
+      .then(res => res.json())
+      .then(data => setRelatorio(data))
+      .catch(err => console.error("Erro ao buscar relatório:", err));
 
-  // --- INTERAÇÕES ---
+    // 2. Busca as Atividades/Itens (Caixa Geral, Estoque, etc)
+    // Nota: Essa rota deve bater com o Controller Java 'RelatorioAtividadeController'
+    fetch(`http://localhost:8080/api/atividades-execucao/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        setAtividades(data);
+        setCarregando(false); // Só para de carregar quando as atividades chegarem
+      })
+      .catch(err => {
+        console.error("Erro ao buscar atividades:", err);
+        setCarregando(false);
+      });
 
-  // Clique Simples: Seleciona
-  const handleRowClick = (itemCode) => {
-    setSelectedId(itemCode);
+  }, [id]);
+
+  // Função auxiliar: Formata Data
+  const formatarData = (dataString) => {
+    if (!dataString) return '-';
+    return new Date(dataString).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
   };
 
-  // Duplo Clique: Abre Modal
-  const handleRowDoubleClick = (row) => {
-    setAtividadeParaEditar(row);
-    setIsModalOpen(true);
+  // Função auxiliar: Remove tags HTML (ex: <html><body>...) para mostrar texto limpo
+  const limparHTML = (html) => {
+    if (!html) return '';
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
   };
 
-  // Botão Editar
-  const handleEditSelected = () => {
-    if (!selectedId) return;
-    const row = listaAtividades.find(a => a.item === selectedId);
-    if (row) {
-        setAtividadeParaEditar(row);
-        setIsModalOpen(true);
-    }
+  // Função auxiliar: Define cor do status
+  const getStatusColor = (status) => {
+    if (!status) return 'gray';
+    if (status === 'FINALIZADO') return 'green';
+    if (status === 'PENDENTE') return 'orange';
+    return 'blue';
   };
 
-  // Botão Mover (Visual apenas - O banco ordena por ID padrão)
-  const handleMoveSelected = (direction) => {
-    if (!selectedId) return;
-    const lista = [...listaAtividades];
-    const index = lista.findIndex(a => a.item === selectedId);
-    if (index === -1) return;
-
-    if (direction === 'up' && index > 0) {
-        [lista[index], lista[index - 1]] = [lista[index - 1], lista[index]];
-    }
-    else if (direction === 'down' && index < lista.length - 1) {
-        [lista[index], lista[index + 1]] = [lista[index + 1], lista[index]];
-    }
-    setListaAtividades(lista);
-  };
-
-  // --- SALVAR NO BANCO DE DADOS ---
-  const handleSaveModal = async (atividadeAtualizada) => {
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(atividadeAtualizada)
-        });
-
-        if (response.ok) {
-            // Sucesso! Recarrega a lista direto do banco para garantir
-            await carregarAtividades();
-            setIsModalOpen(false);
-        } else {
-            alert('Erro ao salvar no banco de dados!');
-        }
-    } catch (error) {
-        console.error(error);
-        alert('Erro de conexão ao tentar salvar.');
-    }
-  };
-
-  if (loading) return <div className="loading">Carregando dados do Banco SQL Server...</div>;
+  if (carregando) return <div className="dashboard-container"><p style={{padding: '20px'}}>Carregando detalhes do processo...</p></div>;
+  if (!relatorio) return <div className="dashboard-container"><p style={{padding: '20px'}}>Relatório não encontrado.</p></div>;
 
   return (
-    <div className="audit-details-container">
-      
-      {/* CABEÇALHO */}
-      <section className="audit-info-header">
-        <div className="header-left-section">
-            <div className="header-top-row">
-                <button className="btn-back-link" onClick={() => navigate('/dashboard')}>
-                    <span className="arrow">←</span> Voltar
-                </button>
-                <span className={`status-pill ${cabecalho.situacao === 'ABERTO' ? 'aberto' : 'em-andamento'}`}>
-                    {cabecalho.situacao}
-                </span>
-            </div>
-            <h1 className="audit-id-title">Auditoria #{cabecalho.numero}</h1>
-            <p className="audit-report-name">{cabecalho.relatorioNome}</p>
+    <div className="dashboard-container">
+      {/* --- MENU LATERAL --- */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+           <h2>SIAI</h2>
         </div>
-        <div className="header-vertical-divider"></div>
-        <div className="header-right-grid">
-            <div className="info-item"><label>Unidade</label><span>{cabecalho.unidade}</span></div>
-            <div className="info-item"><label>Grupo</label><span>{cabecalho.grupo}</span></div>
-            <div className="info-item"><label>Período</label><span>{cabecalho.periodo}</span></div>
-            <div className="info-item"><label>Líder</label><span>{cabecalho.auditorLider}</span></div>
-        </div>
-      </section>
+        <nav className="sidebar-nav">
+           <button className="nav-item active" onClick={() => navigate('/dashboard')}>⬅ Voltar para Lista</button>
+        </nav>
+      </aside>
 
-      {/* ÁREA DA TABELA */}
-      <div className="audit-content-split">
-        
-        <div className="table-toolbar">
-            <div className="toolbar-left">
-                <span className="toolbar-title">Atividades ({listaAtividades.length})</span>
-            </div>
-            
-            <div className="toolbar-actions">
-                <button 
-                    className="btn-toolbar" 
-                    onClick={() => handleMoveSelected('up')}
-                    disabled={!selectedId}
-                    title="Mover Acima"
-                >
-                    ⬆ Mover Acima
-                </button>
-                <button 
-                    className="btn-toolbar" 
-                    onClick={() => handleMoveSelected('down')}
-                    disabled={!selectedId}
-                    title="Mover Abaixo"
-                >
-                    ⬇ Mover Abaixo
-                </button>
-                <div className="divider-small"></div>
-                <button 
-                    className="btn-toolbar primary" 
-                    onClick={handleEditSelected}
-                    disabled={!selectedId}
-                    title="Editar"
-                >
-                    ✏️ Editar Detalhes
-                </button>
-            </div>
-        </div>
-
-        <div className="table-panel">
-          <div className="table-scroll">
-            <table className="modern-table">
-              <thead>
-                <tr>
-                  <th style={{width: '50px', textAlign: 'center'}}>#</th>
-                  <th>Atividades</th>
-                  <th>Dt. Inicial</th>
-                  <th>Dt. Final</th>
-                  <th>Realizado por</th>
-                  <th>Situação</th>
-                  <th>Classificação</th>
-                  <th>Pendência</th>
-                  <th>Anotação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {listaAtividades.map((row, index) => {
-                  const isSelected = selectedId === row.item;
-                  return (
-                    <tr 
-                      key={row.item} 
-                      onClick={() => handleRowClick(row.item)} 
-                      onDoubleClick={() => handleRowDoubleClick(row)}
-                      className={`clickable-row ${isSelected ? 'selected-row' : ''}`}
-                    >
-                      <td style={{textAlign: 'center', fontWeight: 'bold', color: isSelected ? '#FCA311' : '#666'}}>
-                        {index + 1}
-                      </td>
-                      <td><strong>{row.atividade}</strong></td>
-                      
-                      {/* Tratamento de datas para não quebrar se vier nulo */}
-                      <td>{row.dtInicial ? new Date(row.dtInicial).toLocaleDateString('pt-BR', {timeZone: 'UTC'}) : ''}</td>
-                      <td>{row.dtFinal ? new Date(row.dtFinal).toLocaleDateString('pt-BR', {timeZone: 'UTC'}) : ''}</td>
-                      
-                      <td>{row.realizadoPor}</td>
-                      <td>
-                          <span className={`badge-sm ${row.situacao ? row.situacao.toLowerCase().replace(' ', '-') : ''}`}>
-                            {row.situacao}
-                          </span>
-                      </td>
-                      <td>{row.classificacao}</td>
-                      <td style={{ color: row.pendencia === 'Sim' ? 'red' : 'green', fontWeight: 'bold' }}>{row.pendencia}</td>
-                      <td className="truncate-text" title={row.anotacao}>{row.anotacao}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+      {/* --- CONTEÚDO PRINCIPAL --- */}
+      <main className="main-content">
+        <header className="top-bar">
+          <div className="welcome-text">
+            <h1>Detalhes da Auditoria</h1>
+            <p>Relatório Nº <strong>{relatorio.numero}</strong></p>
           </div>
-          <div className="table-footer-hint">
-             ℹ️ Dica: Dados REAIS carregados do SQL Server! Duplo clique para editar e salvar.
-          </div>
-        </div>
-      </div>
+        </header>
 
-      {/* MODAL DE EDIÇÃO */}
-      {atividadeParaEditar && (
-        <ModalAtividade 
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            atividade={atividadeParaEditar}
-            onSave={handleSaveModal}
-        />
-      )}
+        <section className="recent-audits">
+            <div className="card-detalhe" style={{ background: 'white', padding: '25px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                
+                {/* 1. CABEÇALHO DO RELATÓRIO */}
+                <h2 style={{ color: '#2c3e50', borderBottom: '2px solid #f0f0f0', paddingBottom: '15px', marginBottom: '20px' }}>
+                    {relatorio.descricao}
+                </h2>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '30px' }}>
+                    <div>
+                        <small style={{color: '#7f8c8d'}}>GESTOR RESPONSÁVEL</small>
+                        <p style={{fontWeight: 'bold', fontSize: '1.1em'}}>{relatorio.gestor}</p>
+                    </div>
+                    <div>
+                        <small style={{color: '#7f8c8d'}}>DATA REALIZAÇÃO</small>
+                        <p style={{fontWeight: 'bold', fontSize: '1.1em'}}>{formatarData(relatorio.data)}</p>
+                    </div>
+                    <div>
+                         <small style={{color: '#7f8c8d'}}>AUDITOR LÍDER</small>
+                         <p style={{fontWeight: 'bold', fontSize: '1.1em'}}>{relatorio.auditorLider || 'Não informado'}</p>
+                    </div>
+                </div>
 
+                {/* 2. TABELA DE ITENS (ATIVIDADES) */}
+                <h3 style={{ marginTop: '40px', marginBottom: '15px', color: '#34495e' }}>
+                    Itens Verificados ({atividades.length})
+                </h3>
+
+                {atividades.length === 0 ? (
+                    <div style={{padding: '20px', background: '#f8f9fa', borderRadius: '5px', textAlign: 'center'}}>
+                        Nenhum item de verificação encontrado para este relatório.
+                    </div>
+                ) : (
+                    <div className="table-container">
+                        <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                            <thead>
+                                <tr style={{background: '#f1f2f6', color: '#57606f', textAlign: 'left'}}>
+                                    <th style={{padding: '12px', borderBottom: '2px solid #dfe6e9'}}>Tarefa / Descrição</th>
+                                    <th style={{padding: '12px', borderBottom: '2px solid #dfe6e9'}}>Data Início</th>
+                                    <th style={{padding: '12px', borderBottom: '2px solid #dfe6e9'}}>Status</th>
+                                    <th style={{padding: '12px', borderBottom: '2px solid #dfe6e9'}}>Observação (Resumo)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {atividades.map((item) => (
+                                    <tr key={item.id} style={{borderBottom: '1px solid #eee'}}>
+                                        <td style={{padding: '12px', fontWeight: '500', color: '#2c3e50'}}>
+                                            {item.descricao}
+                                        </td>
+                                        <td style={{padding: '12px', color: '#7f8c8d'}}>
+                                            {formatarData(item.dataInicial)}
+                                        </td>
+                                        <td style={{padding: '12px'}}>
+                                            <span style={{
+                                                padding: '4px 8px', 
+                                                borderRadius: '4px', 
+                                                fontSize: '0.85em', 
+                                                fontWeight: 'bold',
+                                                color: 'white',
+                                                backgroundColor: getStatusColor(item.status)
+                                            }}>
+                                                {item.status}
+                                            </span>
+                                        </td>
+                                        <td style={{padding: '12px', fontSize: '0.9em', color: '#636e72', maxWidth: '300px'}}>
+                                            {/* Limpa o HTML e mostra apenas os primeiros 60 caracteres */}
+                                            {limparHTML(item.observacaoHTML).substring(0, 60)}
+                                            {limparHTML(item.observacaoHTML).length > 60 && '...'}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+                
+                <button 
+                    onClick={() => navigate('/dashboard')}
+                    className="btn-voltar-estilizado"
+                    style={{ 
+                        marginTop: '30px', 
+                        padding: '10px 20px', 
+                        background: '#34495e', 
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '5px', 
+                        cursor: 'pointer' 
+                    }}
+                >
+                    Voltar para o Painel
+                </button>
+            </div>
+        </section>
+      </main>
     </div>
   );
 };
