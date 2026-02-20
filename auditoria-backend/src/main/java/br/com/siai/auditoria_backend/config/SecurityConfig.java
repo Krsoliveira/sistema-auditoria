@@ -17,7 +17,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Desabilita proteção CSRF para facilitar APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/atividades/**").permitAll() // Libera login e atividades
+                        // 👇 OLHA A MÁGICA AQUI: Adicionamos o /api/relatorios/** na lista VIP
+                        .requestMatchers("/api/auth/login", "/api/atividades/**", "/api/relatorios/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
