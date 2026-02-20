@@ -1,147 +1,233 @@
-/* src/Dashboard.css */
-/* Layout Geral */
+/* --- VARIÁVEIS DO TEMA NEO-TACTILE --- */
+:root {
+  /* Cores de Fundo */
+  --bg-app: #0a0e17;         /* Fundo principal super escuro */
+  --bg-panel: rgba(30, 39, 54, 0.75); /* Cor do "Vidro" translúcido */
+  --bg-inset: rgba(10, 14, 23, 0.6);  /* Cor para campos "afundados" */
+
+  /* Cores Neon e Texto */
+  --neon-primary: #00f2ff;   /* O azul elétrico vibrante */
+  --text-bright: #ffffff;    /* Texto principal */
+  --text-muted: #94a3b8;     /* Texto secundário */
+
+  /* Efeitos de Vidro e Luz */
+  --glass-border: 1px solid rgba(0, 242, 255, 0.2); /* Borda sutil brilhante */
+  --glass-blur: blur(12px);   /* O desfoque do vidro */
+  --neon-glow: 0 0 15px rgba(0, 242, 255, 0.4), inset 0 0 10px rgba(0, 242, 255, 0.1); /* Brilho intenso */
+  --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Sombra profunda para dar 3D */
+}
+
+/* --- ESTRUTURA GERAL (DARK MODE) --- */
+body, html {
+  background-color: var(--bg-app);
+  color: var(--text-bright);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .dashboard-container {
   display: flex;
   height: 100vh;
-  background-color: var(--color-bg-light); /* Fundo cinza claro */
-  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top right, rgba(0, 242, 255, 0.1), transparent 40%),
+              var(--bg-app); 
 }
 
-/* --- SIDEBAR (Barra Lateral) --- */
+/* --- SIDEBAR REFORMULADA --- */
 .sidebar {
   width: 260px;
-  /* Fundo Azul Noturno sólido */
-  background: var(--color-primary-dark);
-  color: var(--color-text-on-dark);
+  background: var(--bg-panel);
+  backdrop-filter: var(--glass-blur);
+  border-right: var(--glass-border);
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+  box-sizing: border-box; /* Garante que o padding não quebre a largura */
 }
 
-.sidebar-header h2 { margin: 0; color: var(--color-accent-gold); /* Título Dourado */ font-weight: 800; }
-.sidebar-header span { font-size: 12px; color: rgba(255,255,255,0.6); }
+.sidebar-header {
+  padding-bottom: 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Linha divisória sutil */
+  margin-bottom: 25px;
+}
 
+.sidebar-header h2 {
+  color: var(--neon-primary);
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); 
+  margin: 0 0 5px 0;
+  font-size: 32px;
+  letter-spacing: 1px;
+}
+
+.sidebar-header span {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+}
+
+/* O Segredo do alinhamento: Flex Column */
 .sidebar-nav {
-  margin-top: 40px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px; /* Espaço perfeito entre os botões */
+  flex-grow: 1; /* Permite empurrar o botão Sair pro fundo */
 }
 
 .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
   background: transparent;
-  border: none;
-  color: rgba(255,255,255,0.7);
-  text-align: left;
-  padding: 12px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: all 0.2s;
+  border: 1px solid transparent;
+  padding: 14px 18px;
+  border-radius: 12px;
   font-weight: 500;
-}
-
-/* Item ativo e hover com o Dourado */
-.nav-item:hover, .nav-item.active {
-  background: rgba(252, 163, 17, 0.15); /* Dourado com transparência */
-  color: var(--color-accent-gold); /* Texto Dourado */
-  font-weight: 700;
-}
-
-.sidebar-footer { margin-top: auto; }
-.logout-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.8);
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
+  font-size: 15px;
+  text-align: left;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.3s ease;
+  width: 100%;
 }
-.logout-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; }
 
-/* --- MAIN CONTENT --- */
+.nav-item:hover {
+  background: rgba(0, 242, 255, 0.05);
+  color: var(--neon-primary);
+}
+
+.nav-item.active {
+  background: rgba(0, 242, 255, 0.1);
+  color: var(--neon-primary);
+  border: var(--glass-border);
+  box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.05);
+}
+
+/* Tratamento especial pro botão de Sair */
+.nav-item.logout {
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.1);
+}
+
+.nav-item.logout:hover {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff8787;
+  border-color: rgba(255, 107, 107, 0.4);
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+}
+
+
+/* --- CONTEÚDO PRINCIPAL --- */
 .main-content {
   flex: 1;
-  padding: 30px;
+  padding: 40px;
   overflow-y: auto;
 }
 
-.welcome-text h1 { margin: 0; color: var(--color-primary-dark); font-size: 28px; font-weight: 800; }
-.welcome-text p { margin: 5px 0 0; color: var(--color-text-secondary); }
-
-/* Botão Principal de Ação Dourado */
-.btn-nova-auditoria {
-  background: var(--color-accent-gold); /* */
-  color: var(--color-primary-dark);
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(252, 163, 17, 0.3);
-  transition: transform 0.2s, background 0.2s;
+.top-bar h1 {
+  color: var(--text-bright);
+  margin-top: 0;
 }
-.btn-nova-auditoria:hover { transform: translateY(-2px); background: #e59100; }
+.top-bar p {
+  color: var(--text-muted);
+}
 
-/* --- STATS CARDS --- */
+/* --- CARDS DE ESTATÍSTICAS (Efeitos hover) --- */
 .stat-card {
-  background: var(--color-bg-main);
-  padding: 25px;
-  border-radius: 16px;
-  position: relative;
-  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--color-border-subtle);
-  transition: 0.2s;
-}
-/* Efeito hover elegante nos cards */
-.stat-card:hover { border-color: var(--color-accent-gold); transform: translateY(-2px); }
-
-.stat-card h3 { font-size: 36px; margin: 0; color: var(--color-primary-dark); font-weight: 800; }
-.stat-card p { margin: 5px 0 0; color: var(--color-text-secondary); font-size: 14px; font-weight: 600; }
-.icon-bg {
-  position: absolute;
-  top: 25px; right: 25px;
-  font-size: 28px;
-  opacity: 0.2;
-  color: var(--color-primary-dark);
+  transition: transform 0.3s ease;
 }
 
-/* --- TABLE --- */
-.recent-audits h3 { color: var(--color-primary-dark); margin-bottom: 20px; font-weight: 700; }
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--neon-glow) !important;
+}
+
+
+/* --- TABELA (VISUAL CLEAN DARK) --- */
+.recent-audits {
+  margin-top: 30px;
+}
+
+.section-header h3 {
+  color: var(--neon-primary);
+}
 
 .table-container {
-  background: var(--color-bg-main);
+  background: var(--bg-panel);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--panel-shadow);
   border-radius: 16px;
-  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
+  padding: 5px; 
   overflow: hidden;
-  border: 1px solid var(--color-border-subtle);
+  overflow-x: auto;
 }
 
-table { width: 100%; border-collapse: collapse; }
-/* Cabeçalho da tabela usando o Azul Noturno */
-th { background: var(--color-primary-dark); text-align: left; padding: 18px; color: var(--color-text-on-dark); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
-td { padding: 18px; border-bottom: 1px solid var(--color-border-subtle); color: var(--color-text-primary); }
-tr:hover td { background: var(--color-bg-light); }
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
 
-/* Status Badges adaptados */
-.status-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
-.status-badge.finalizado { background: #d1fae5; color: #065f46; } /* Verde mantido */
-.status-badge.pendente { background: #fef3c7; color: #92400e; } /* Amarelo mantido */
-/* "Em Andamento" usa o Dourado da paleta */
-.status-badge.em-andamento { background: rgba(252, 163, 17, 0.2); color: var(--color-accent-gold); }
-
-.btn-detalhes {
-  background: transparent;
-  color: var(--color-primary-dark);
-  border: 2px solid var(--color-border-subtle);
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
+table thead th {
+  background: rgba(0, 242, 255, 0.05);
+  color: var(--neon-primary);
+  padding: 18px;
   font-size: 13px;
-  font-weight: 700;
-  transition: 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: var(--glass-border);
+  text-align: left;
 }
-.btn-detalhes:hover { border-color: var(--color-accent-gold); color: var(--color-accent-gold); background: var(--color-bg-main); }
+
+table tbody tr {
+  transition: background 0.2s;
+}
+
+table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03); 
+}
+
+table td {
+  padding: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.relatorio-id {
+  font-family: monospace;
+  color: var(--neon-primary);
+  font-weight: bold;
+}
+
+.desc-cell strong {
+  color: var(--text-bright);
+  font-weight: 500;
+}
+
+/* --- BOTÕES GLOW DA TABELA --- */
+.btn-detalhes {
+  background: rgba(0, 242, 255, 0.1);
+  color: var(--neon-primary);
+  border: 1px solid var(--neon-primary);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px rgba(0, 242, 255, 0.2);
+}
+
+.btn-detalhes:hover {
+  background: var(--neon-primary);
+  color: var(--bg-app);
+  box-shadow: var(--neon-glow);
+}
+
+/* Alinhamento de placeholder nos inputs escuros */
+::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+}

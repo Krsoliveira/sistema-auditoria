@@ -1,83 +1,80 @@
 package br.com.siai.auditoria_backend.controller;
 
-import br.com.siai.auditoria_backend.model.Usuario;
-import br.com.siai.auditoria_backend.repository.UsuarioRepository;
+import br.com.siai.auditoria_backend.model.Colaborador;
+import br.com.siai.auditoria_backend.repository.ColaboradorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder; // Se ficar vermelho, recarregue o Maven
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // Permite que o seu React (porta 5173 ou 3000) acesse o Java
+@CrossOrigin(origins = "*") // Permite o React conversar com o Java
 public class AuthController {
 
     @Autowired
-    private UsuarioRepository repository;
+    private ColaboradorRepository repository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    /**
-     * Lógica de Login
-     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> dados) {
         String matricula = dados.get("matricula");
         String senha = dados.get("senha");
 
-        // Busca o usuário (usando a lógica de TRIM que criamos no Repository)
-        Optional<Usuario> usuarioOpt = repository.findByMatricula(matricula);
+        if (matricula == null || senha == null) {
+            return ResponseEntity.badRequest().body("Matrícula e senha são obrigatórios.");
+        }
 
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
+        // 1. Busca o colaborador no banco pela matrícula (colCodigo)
+        Optional<Colaborador> colOpt = repository.findByColCodigo(matricula.trim());
 
-            // Verifica se a senha digitada bate com o Hash BCrypt do banco
-            if (passwordEncoder.matches(senha.trim(), usuario.getHashSenha().trim())) {
-                System.out.println("Login realizado com sucesso: " + usuario.getNomeCompleto());
-                return ResponseEntity.ok(usuario);
+        if (colOpt.isPresent()) {
+            Colaborador colaborador = colOpt.get();
+
+            // 2. Regra de Negócio: Verifica se tem acesso ao sistema (colAcessoAoSistema = 0 bloqueia)
+            if (colaborador.getColAcessoAoSistema() == null || colaborador.getColAcessoAoSistema() == 0) {
+                System.out.println(">>> Login BLOQUEADO (Sem acesso): " + matricula);
+                return ResponseEntity.status(403).body("Acesso bloqueado para este usuário.");
+            }
+
+            // 3. Validação de Senha Legada: Base64(MD5(utf8(matricula + senha)))
+            try {
+                String textoParaAvaliar = matricula.trim() + senha;
+
+                // Gera o MD5
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                byte[] hashGerado = md.digest(textoParaAvaliar.getBytes(StandardCharsets.UTF_8));
+
+                // Converte para Base64
+                String hashFinal = Base64.getEncoder().encodeToString(hashGerado);
+
+                // Comparação Segura em Tempo Constante (Constant-time comparison)
+                boolean senhaValida = MessageDigest.isEqual(
+                        hashFinal.getBytes(StandardCharsets.UTF_8),
+                        colaborador.getColSenha().trim().getBytes(StandardCharsets.UTF_8)
+                );
+
+                if (senhaValida) {
+                    System.out.println(">>> Login SUCESSO: " + colaborador.getColNome());
+
+                    // Oculta a senha antes de mandar os dados do usuário para o React (Boa prática!)
+                    colaborador.setColSenha(null);
+                    return ResponseEntity.ok(colaborador);
+                }
+
+            } catch (Exception e) {
+                System.err.println(">>> Erro na criptografia MD5: " + e.getMessage());
+                return ResponseEntity.status(500).body("Erro interno de validação.");
             }
         }
 
-        System.out.println("Falha de login para matrícula: " + matricula);
-        return ResponseEntity.status(401).body("Matrícula ou senha inválidos");
-    }
-
-    /**
-     * Lógica de Alteração de Senha
-     */
-    @PostMapping("/alterar-senha")
-    public ResponseEntity<?> alterarSenha(@RequestBody Map<String, String> dados) {
-        String matricula = dados.get("matricula");
-        String senhaAtual = dados.get("senhaAtual");
-        String novaSenha = dados.get("novaSenha");
-
-        // Localiza o usuário
-        Optional<Usuario> usuarioOpt = repository.findByMatricula(matricula);
-
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
-
-            // 1. Valida se a senha ATUAL está correta
-            if (passwordEncoder.matches(senhaAtual.trim(), usuario.getHashSenha().trim())) {
-
-                // 2. Gera o novo hash para a NOVA senha
-                String novoHash = passwordEncoder.encode(novaSenha.trim());
-
-                // 3. Atualiza no objeto e salva no SQL Server
-                usuario.setHashSenha(novoHash);
-                repository.save(usuario);
-
-                System.out.println("Senha alterada para o usuário: " + usuario.getNomeCompleto());
-                return ResponseEntity.ok("Senha alterada com sucesso!");
-            } else {
-                return ResponseEntity.status(401).body("Senha atual incorreta.");
-            }
-        }
-
-        return ResponseEntity.status(404).body("Usuário não encontrado.");
+        // Se chegou aqui, a matrícula não existe ou a senha está errada.
+        // Retornamos mensagem genérica para não dar dicas a hackers.
+        System.out.println(">>> Login FALHOU para: " + matricula);
+        return ResponseEntity.status(401).body("Matrícula ou senha inválidos.");
     }
 }
