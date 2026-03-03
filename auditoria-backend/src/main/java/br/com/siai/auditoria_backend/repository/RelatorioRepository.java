@@ -2,6 +2,7 @@ package br.com.siai.auditoria_backend.repository;
 
 import br.com.siai.auditoria_backend.model.Relatorio;
 import br.com.siai.auditoria_backend.model.DashboardDTO;
+import br.com.siai.auditoria_backend.model.CabecalhoDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,44 +13,71 @@ import java.util.List;
 @Repository
 public interface RelatorioRepository extends JpaRepository<Relatorio, Integer> {
 
-    // 1. CONSULTA NORMAL: Busca filtrando por um ano específico
-    @Query(value = "SELECT c.croId AS id, " +
-            "c.croTexto AS texto, " +
-            "c.croSituacao AS situacao, " +
-            "c.croTipoTrabalho AS tipoTrabalho, " +
-            "CONVERT(VARCHAR(19), c.croDataInicialP, 126) AS dataInicialPrevista, " +
-            "CONVERT(VARCHAR(19), c.croDataFinalP, 126) AS dataFinalPrevista, " +
-            "CONVERT(VARCHAR(19), c.croDataInicialR, 126) AS dataInicialRealizada, " +
-            "CONVERT(VARCHAR(19), c.croDataFinalR, 126) AS dataFinalRealizada, " +
-            "r.relNumero AS numeroRelatorio, " +
-            "r.relDescricao AS descricaoRelatorio, " +
-            "zg.gruDescricao AS grupoDescricao " +
-            "FROM Cronograma c " +
-            "LEFT JOIN Relatorio r ON c.croId = r.croId " +
-            "LEFT JOIN UnidadeGrupo ug ON c.uniId = ug.uniId " +
-            "LEFT JOIN zaudGrupo zg ON ug.gruId = zg.gruId " +
-            "WHERE YEAR(c.croDataInicialP) = :ano", nativeQuery = true)
+    // 🔴 DASHBOARD CORRIGIDO: Todas as colunas restauradas (datas, descrições, tipoTrabalho)
+    // E organizadas em ordem alfabética para evitar que o Hibernate misture os dados.
+    @Query(value = """
+        SELECT 
+            CONVERT(VARCHAR(19), c.croDataFinalP, 126) AS dataFinalPrevista,
+            CONVERT(VARCHAR(19), c.croDataFinalR, 126) AS dataFinalRealizada,
+            CONVERT(VARCHAR(19), c.croDataInicialP, 126) AS dataInicialPrevista,
+            CONVERT(VARCHAR(19), c.croDataInicialR, 126) AS dataInicialRealizada,
+            r.relDescricao AS descricaoRelatorio,
+            zg.gruDescricao AS grupoDescricao,
+            c.croId AS id,
+            r.relNumero AS numeroRelatorio,
+            c.croSituacao AS situacao,
+            c.croTexto AS texto,
+            c.croTipoTrabalho AS tipoTrabalho
+        FROM Cronograma c 
+        LEFT JOIN Relatorio r ON c.croId = r.croId 
+        LEFT JOIN UnidadeGrupo ug ON c.uniId = ug.uniId 
+        LEFT JOIN zaudGrupo zg ON ug.gruId = zg.gruId 
+        WHERE YEAR(c.croDataInicialP) = :ano 
+        ORDER BY c.croId DESC
+    """, nativeQuery = true)
     List<DashboardDTO> buscarPorAno(@Param("ano") Integer ano);
 
-    // 2. NOVA CONSULTA: Busca ABSOLUTAMENTE TUDO (Histórico completo)
-    @Query(value = "SELECT c.croId AS id, " +
-            "c.croTexto AS texto, " +
-            "c.croSituacao AS situacao, " +
-            "c.croTipoTrabalho AS tipoTrabalho, " +
-            "CONVERT(VARCHAR(19), c.croDataInicialP, 126) AS dataInicialPrevista, " +
-            "CONVERT(VARCHAR(19), c.croDataFinalP, 126) AS dataFinalPrevista, " +
-            "CONVERT(VARCHAR(19), c.croDataInicialR, 126) AS dataInicialRealizada, " +
-            "CONVERT(VARCHAR(19), c.croDataFinalR, 126) AS dataFinalRealizada, " +
-            "r.relNumero AS numeroRelatorio, " +
-            "r.relDescricao AS descricaoRelatorio, " +
-            "zg.gruDescricao AS grupoDescricao " +
-            "FROM Cronograma c " +
-            "LEFT JOIN Relatorio r ON c.croId = r.croId " +
-            "LEFT JOIN UnidadeGrupo ug ON c.uniId = ug.uniId " +
-            "LEFT JOIN zaudGrupo zg ON ug.gruId = zg.gruId", nativeQuery = true)
+    @Query(value = """
+        SELECT 
+            CONVERT(VARCHAR(19), c.croDataFinalP, 126) AS dataFinalPrevista,
+            CONVERT(VARCHAR(19), c.croDataFinalR, 126) AS dataFinalRealizada,
+            CONVERT(VARCHAR(19), c.croDataInicialP, 126) AS dataInicialPrevista,
+            CONVERT(VARCHAR(19), c.croDataInicialR, 126) AS dataInicialRealizada,
+            r.relDescricao AS descricaoRelatorio,
+            zg.gruDescricao AS grupoDescricao,
+            c.croId AS id,
+            r.relNumero AS numeroRelatorio,
+            c.croSituacao AS situacao,
+            c.croTexto AS texto,
+            c.croTipoTrabalho AS tipoTrabalho
+        FROM Cronograma c 
+        LEFT JOIN Relatorio r ON c.croId = r.croId 
+        LEFT JOIN UnidadeGrupo ug ON c.uniId = ug.uniId 
+        LEFT JOIN zaudGrupo zg ON ug.gruId = zg.gruId 
+        ORDER BY c.croId DESC
+    """, nativeQuery = true)
     List<DashboardDTO> buscarTodos();
 
-    // 3. CONSULTA DE ANOS: Para preencher o dropdown
+    // CABEÇALHO: Intacto com o TOP 1 (proteção contra duplicatas) e em Ordem Alfabética
+    @Query(value = """
+        SELECT TOP 1
+            r.relCabecalho1 AS cabecalho1,
+            r.relCabecalho2 AS cabecalho2,
+            r.relCabecalho3 AS cabecalho3,
+            r.relGestor AS gestor,
+            zg.gruDescricao AS grupo,
+            r.relNumero AS numero, 
+            r.relDescricao AS relatorio, 
+            c.croSituacao AS situacao,
+            r.relSugestao AS sugestao
+        FROM Auditoria.Relatorio r
+        JOIN Cronograma c ON r.croId = c.croId
+        LEFT JOIN UnidadeGrupo ug ON c.uniId = ug.uniId
+        LEFT JOIN zaudGrupo zg ON ug.gruId = zg.gruId
+        WHERE c.croId = :croId
+    """, nativeQuery = true)
+    CabecalhoDTO buscarCabecalho(@Param("croId") Integer croId);
+
     @Query(value = "SELECT DISTINCT YEAR(croDataInicialP) FROM Cronograma WHERE croDataInicialP IS NOT NULL ORDER BY YEAR(croDataInicialP) DESC", nativeQuery = true)
     List<Integer> buscarAnosDisponiveis();
 }

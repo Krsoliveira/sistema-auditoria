@@ -1,8 +1,19 @@
-package br.com.siai.model;
+package br.com.siai.auditoria_backend.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(schema = "Auditoria", name = "RelatorioAtividade")
 public class RelatorioAtividade {
+
+    // 👇 A mágica do JPA está aqui: Avisamos que este é o ID da tabela
+    @Id
+    private int reaId;
+
     // Campos principais do banco legado
-    private int reaId, relId, atvId, reaItem, reaDias, colId, carClassificacao, reaFlagNum, atgObrigatorio;
+    private int relId, atvId, reaItem, reaDias, colId, carClassificacao, reaFlagNum, atgObrigatorio;
     private int reaUsuarioInclusaoId, reaUsuarioAlteracaoId, reaPendencia, penId, reaQuebra, reaQuebraPendencia;
 
     private String atvDescricaoPTA, reaDataInicial, reaDataFinal, reaHoraInicial, reaHoraFinal, reaHoras;
@@ -65,7 +76,6 @@ public class RelatorioAtividade {
     public String getReaUsuarioAlteracao() { return reaUsuarioAlteracao; }
     public void setReaUsuarioAlteracao(String reaUsuarioAlteracao) { this.reaUsuarioAlteracao = reaUsuarioAlteracao; }
 
-    // Getters para os outros campos usados no DAO
     public int getReaItem() { return reaItem; }
     public void setReaItem(int reaItem) { this.reaItem = reaItem; }
     public String getReaHoraInicial() { return reaHoraInicial; }

@@ -8,17 +8,13 @@ const DetalhesAuditoria = () => {
   
   const [atividades, setAtividades] = useState([]);
   const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
-  
-  // 🔴 NOVO: Estado para controlar se a janela gigante está aberta
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  // 🔴 ATUALIZADO: Agora o cabeçalho guarda os textos HTML também
+  const [loading, setLoading] = useState(true);
+
   const [cabecalho, setCabecalho] = useState({ 
-    relatorio: '-', numero: '-', situacao: '-',
+    relatorio: '-', numero: '-', gestor: '-', situacao: '-', grupo: '-',
     cabecalho1: '', cabecalho2: '', cabecalho3: '', sugestao: ''
   });
-  
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -53,7 +49,9 @@ const DetalhesAuditoria = () => {
               setCabecalho({
                 relatorio: dataCabecalho.relatorio || 'N/A',
                 numero: dataCabecalho.numero || 'N/A',
+                gestor: dataCabecalho.gestor || 'N/A',
                 situacao: dataCabecalho.situacao || 'N/A',
+                grupo: dataCabecalho.grupo || 'Geral',
                 cabecalho1: dataCabecalho.cabecalho1 || '',
                 cabecalho2: dataCabecalho.cabecalho2 || '',
                 cabecalho3: dataCabecalho.cabecalho3 || '',
@@ -93,7 +91,6 @@ const DetalhesAuditoria = () => {
 
   const gridTemplate = "60px 2fr 100px 100px 1.5fr 120px 1.5fr 60px";
 
-  // Função auxiliar para renderizar o HTML com segurança na tela
   const renderizarHTML = (htmlString) => {
     if (!htmlString) return <span style={{color: 'rgba(255,255,255,0.3)'}}>Sem informações cadastradas.</span>;
     return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
@@ -123,18 +120,20 @@ const DetalhesAuditoria = () => {
         <section style={{ 
             background: 'var(--bg-panel)', padding: '20px', borderRadius: '16px', 
             boxShadow: 'var(--panel-shadow)', border: 'var(--glass-border)', marginBottom: '20px',
-            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px'
+            display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 1fr', gap: '15px'
         }}>
           <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Relatório</span><br/><strong style={{ color: 'var(--text-bright)' }}>{cabecalho.relatorio}</strong></div>
           <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Número</span><br/><strong style={{ color: 'var(--neon-primary)' }}>{cabecalho.numero}</strong></div>
-          <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Gestor / Situação</span><br/><strong style={{ color: '#ffc107' }}>{cabecalho.situacao}</strong></div>
+          <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Grupo</span><br/><strong style={{ color: 'var(--neon-secondary)', textShadow: '0 0 5px var(--neon-secondary)' }}>{cabecalho.grupo}</strong></div>
+          <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Gestor</span><br/><strong style={{ color: 'var(--text-bright)' }}>{cabecalho.gestor}</strong></div>
+          <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Situação</span><br/><strong style={{ color: '#ffc107' }}>{cabecalho.situacao}</strong></div>
           <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Total Itens</span><br/><strong style={{ color: 'var(--text-bright)' }}>{atividades.length}</strong></div>
         </section>
 
         {/* BLOCO 2: TABELA DE ATIVIDADES */}
         <section style={{ background: 'var(--bg-panel)', borderRadius: '16px', border: 'var(--glass-border)', marginBottom: '20px', overflow: 'hidden' }}>
           <div style={{ padding: '15px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{ margin: 0, color: 'var(--text-bright)' }}>Atividades do Relatório (Clique para abrir)</h3>
+            <h3 style={{ margin: 0, color: 'var(--text-bright)' }}>Atividades do Relatório (Duplo clique para abrir)</h3>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => moverItemSelecionado(-1)} disabled={indexSelecionado <= 0} style={{ background: 'rgba(0, 242, 255, 0.1)', color: 'var(--neon-primary)', border: '1px solid var(--neon-primary)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>▲ Subir</button>
               <button onClick={() => moverItemSelecionado(1)} disabled={indexSelecionado === -1 || indexSelecionado === atividades.length - 1} style={{ background: 'rgba(0, 242, 255, 0.1)', color: 'var(--neon-primary)', border: '1px solid var(--neon-primary)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>▼ Descer</button>
@@ -156,14 +155,16 @@ const DetalhesAuditoria = () => {
                     const isSelecionada = atividadeSelecionada?.item === atv.item && atividadeSelecionada?.atividade === atv.atividade;
                     const isZero = Number(atv.item) === 0;
                     const numeroDaLinha = isZero ? "" : contadorVisual++;
+                    
+                    const classTexto = (atv.classificacao === 'Selecione...' || !atv.classificacao) ? '-' : atv.classificacao;
 
                     return (
                       <div 
                         key={index} 
-                        onClick={() => {
-                          setAtividadeSelecionada(atv);
-                          setIsModalOpen(true); // 🔴 Abre a janela ao clicar!
-                        }}
+                        // 🔴 A CIRURGIA ACONTECEU NESTAS DUAS LINHAS ABAIXO:
+                        onClick={() => setAtividadeSelecionada(atv)} // Clique simples APENAS seleciona a linha
+                        onDoubleClick={() => setIsModalOpen(true)}   // Clique duplo ABRE O MODAL gigante
+                        title="Dê um duplo clique para ver os detalhes da atividade"
                         style={{ 
                           display: 'grid', gridTemplateColumns: gridTemplate, gap: '10px',
                           padding: '12px 20px', cursor: 'pointer', alignItems: 'center',
@@ -179,7 +180,7 @@ const DetalhesAuditoria = () => {
                         <div>{atv.dataFinal}</div>
                         <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={atv.realizadoPor}>{atv.realizadoPor}</div>
                         <div><span style={{ color: atv.situacao === 'F' ? '#28a745' : '#ffc107', fontWeight: 'bold' }}>{atv.situacao === 'F' ? 'FINALIZADO' : (atv.situacao === 'A' ? 'AGUARDANDO' : atv.situacao)}</span></div>
-                        <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={atv.classificacao}>{atv.classificacao}</div>
+                        <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={classTexto}>{classTexto}</div>
                         <div>{atv.pendencia ? 'Sim' : 'Não'}</div>
                       </div>
                     )
@@ -194,15 +195,13 @@ const DetalhesAuditoria = () => {
 
       </main>
 
-      {/* ========================================================================= */}
-      {/* 🔴 A JANELA GIGANTE (MODAL DE DETALHES) 🔴 */}
-      {/* ========================================================================= */}
+      {/* A JANELA GIGANTE (MODAL DE DETALHES) */}
       {isModalOpen && atividadeSelecionada && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.85)', zIndex: 9999,
           display: 'flex', justifyContent: 'center', alignItems: 'center',
-          backdropFilter: 'blur(5px)' // Efeito de desfoque no fundo
+          backdropFilter: 'blur(5px)'
         }}>
           
           <div style={{
@@ -216,9 +215,14 @@ const DetalhesAuditoria = () => {
               padding: '20px', borderBottom: '1px solid rgba(0, 242, 255, 0.3)', 
               display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#050a14' 
             }}>
-              <h2 style={{ margin: 0, color: 'var(--neon-primary)', fontSize: '20px' }}>
-                Edição de Atividade: {atividadeSelecionada.atividade}
-              </h2>
+              <div>
+                <h2 style={{ margin: 0, color: 'var(--neon-primary)', fontSize: '20px' }}>
+                  Atividade: {atividadeSelecionada.atividade}
+                </h2>
+                <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>
+                  Grupo: {cabecalho.grupo} | Situação: {cabecalho.situacao}
+                </span>
+              </div>
               <button 
                 onClick={() => setIsModalOpen(false)}
                 style={{ background: 'transparent', border: 'none', color: '#ff4444', fontSize: '24px', cursor: 'pointer', fontWeight: 'bold' }}
