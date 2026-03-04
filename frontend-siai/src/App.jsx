@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import AuditoriaForm from './pages/AuditoriaForm'; // Tela de Nova Auditoria
 import AlterarSenha from './pages/AlterarSenha';
 import DetalhesAuditoria from './pages/DetalhesAuditoria'; // Nossa nova tela Neo-Tactile!
+import BancoHoras from './pages/BancoHoras';
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         
         {/* Rota 5: Alterar Senha */}
         <Route path="/alterar-senha" element={<AlterarSenha />} /> 
+        {/* Rota 6: Banco de Horas */}
+        <Route path="/banco-horas" element={<BancoHoras />} />
       </Routes>
     </Router>
   );

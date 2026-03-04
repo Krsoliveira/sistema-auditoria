@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar'; // O CARIMBO AQUI
 import '../Dashboard.css';
 
 const Dashboard = () => {
@@ -135,11 +136,6 @@ const Dashboard = () => {
     return grupo;
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('usuarioLogado');
-    navigate('/');
-  };
-
   // Os cards calculam as estatísticas baseadas na lista limpa
   const totalPlanejadoAno = relatoriosUnicos.length; 
   const qtdFinalizados = relatoriosUnicos.filter(r => (r.situacao || '').trim().toUpperCase() === 'FINALIZADO').length;
@@ -152,31 +148,12 @@ const Dashboard = () => {
   const progressoPorcentagem = totalPlanejadoAno > 0 ? Math.round((qtdFinalizados / totalPlanejadoAno) * 100) : 0;
 
   return (
-    <div className="dashboard-container">
-      <aside className="sidebar">
-        <div className="sidebar-header">
-           <h2>SIAI</h2>
-           <span>Auditoria Interna</span>
-        </div>
-        
-        <nav className="sidebar-nav">
-           <button className="nav-item active">
-             <span style={{ fontSize: '18px' }}>⊞</span> Visão Geral
-           </button>
-           
-           <button className="nav-item" onClick={() => navigate('/alterar-senha')}>
-             <span style={{ fontSize: '18px' }}>⚙</span> Alterar Senha
-           </button>
+    <div className="dashboard-container" style={{ display: 'flex', minHeight: '100vh' }}>
+      
+      {/* 🔴 O NOSSO COMPONENTE MÁGICO SUBSTITUIU MILHARES DE LINHAS AQUI */}
+      <Sidebar />
 
-           <div style={{ flexGrow: 1 }}></div>
-
-           <button className="nav-item logout" onClick={handleLogout}>
-             <span style={{ fontSize: '18px' }}>⏏</span> Sair
-           </button>
-        </nav>
-      </aside>
-
-      <main className="main-content">
+      <main className="main-content" style={{ flex: 1 }}>
         <header className="top-bar">
           <div className="welcome-text">
             <h1>Olá, {usuarioLogado?.colNome || 'Auditor'}</h1>
