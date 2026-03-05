@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar'; // 🔴 IMPORTAÇÃO DO MENU AQUI!
+import Sidebar from '../components/Sidebar'; 
 import '../Dashboard.css';
 
 const DetalhesAuditoria = () => {
@@ -12,7 +12,6 @@ const DetalhesAuditoria = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Estado para as Abas e Anotações
   const [activeTab, setActiveTab] = useState('detalhes'); 
   const [anotacoes, setAnotacoes] = useState([]);
   const [loadingAnotacoes, setLoadingAnotacoes] = useState(false);
@@ -116,21 +115,19 @@ const DetalhesAuditoria = () => {
   const gridTemplate = "60px 2fr 100px 100px 1.5fr 120px 1.5fr 60px";
 
   const renderizarHTML = (htmlString) => {
-    if (!htmlString || htmlString.trim() === '') return <span style={{color: 'rgba(255,255,255,0.2)', fontStyle: 'italic'}}>Nenhum texto preenchido.</span>;
+    if (!htmlString || htmlString.trim() === '') return <span style={{color: 'var(--text-muted)', fontStyle: 'italic'}}>Nenhum texto preenchido.</span>;
     return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
   };
 
   return (
     <div className="dashboard-container" style={{ display: 'flex', minHeight: '100vh' }}>
       
-      {/* 🔴 A MÁGICA AQUI: Usando o carimbo do Menu Lateral */}
       <Sidebar />
 
       <main className="main-content" style={{ flex: 1, padding: '30px', overflowY: 'auto' }}>
         
-        {/* CABEÇALHO DA TELA */}
         <header style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'rgba(0, 242, 255, 0.1)', border: '1px solid var(--neon-primary)', color: 'var(--neon-primary)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+          <button onClick={() => navigate(-1)} style={{ background: 'rgba(0, 135, 95, 0.1)', border: '1px solid var(--neon-primary)', color: 'var(--neon-primary)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
             ← Voltar
           </button>
           <div>
@@ -139,7 +136,6 @@ const DetalhesAuditoria = () => {
           </div>
         </header>
 
-        {/* BLOCO 1: INFORMAÇÕES GERAIS */}
         <section style={{ background: 'var(--bg-panel)', padding: '20px', borderRadius: '16px', boxShadow: 'var(--panel-shadow)', border: 'var(--glass-border)', marginBottom: '20px', display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 1fr', gap: '15px' }}>
           <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Relatório</span><br/><strong style={{ color: 'var(--text-bright)' }}>{cabecalho.relatorio}</strong></div>
           <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Número</span><br/><strong style={{ color: 'var(--neon-primary)' }}>{cabecalho.numero}</strong></div>
@@ -149,18 +145,17 @@ const DetalhesAuditoria = () => {
           <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Total Itens</span><br/><strong style={{ color: 'var(--text-bright)' }}>{atividades.length}</strong></div>
         </section>
 
-        {/* BLOCO 2: TABELA DE ATIVIDADES */}
-        <section style={{ background: 'var(--bg-panel)', borderRadius: '16px', border: 'var(--glass-border)', marginBottom: '20px', overflow: 'hidden' }}>
-          <div style={{ padding: '15px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <section style={{ background: 'var(--bg-panel)', borderRadius: '16px', border: 'var(--glass-border)', marginBottom: '20px', overflow: 'hidden', boxShadow: 'var(--panel-shadow)' }}>
+          <div style={{ padding: '15px 20px', borderBottom: 'var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 style={{ margin: 0, color: 'var(--text-bright)' }}>Atividades do Relatório (Duplo clique para abrir)</h3>
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={() => moverItemSelecionado(-1)} disabled={indexSelecionado <= 0} style={{ background: 'rgba(0, 242, 255, 0.1)', color: 'var(--neon-primary)', border: '1px solid var(--neon-primary)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>▲ Subir</button>
-              <button onClick={() => moverItemSelecionado(1)} disabled={indexSelecionado === -1 || indexSelecionado === atividades.length - 1} style={{ background: 'rgba(0, 242, 255, 0.1)', color: 'var(--neon-primary)', border: '1px solid var(--neon-primary)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>▼ Descer</button>
+              <button onClick={() => moverItemSelecionado(-1)} disabled={indexSelecionado <= 0} style={{ background: 'rgba(0, 135, 95, 0.1)', color: 'var(--neon-primary)', border: '1px solid var(--neon-primary)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>▲ Subir</button>
+              <button onClick={() => moverItemSelecionado(1)} disabled={indexSelecionado === -1 || indexSelecionado === atividades.length - 1} style={{ background: 'rgba(0, 135, 95, 0.1)', color: 'var(--neon-primary)', border: '1px solid var(--neon-primary)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>▼ Descer</button>
             </div>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: gridTemplate, gap: '10px', padding: '12px 20px', backgroundColor: '#050a14', borderBottom: '2px solid var(--neon-primary)', color: 'var(--neon-primary)', fontWeight: 'bold', fontSize: '13px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: gridTemplate, gap: '10px', padding: '12px 20px', backgroundColor: 'var(--bg-inset)', borderBottom: '2px solid var(--neon-primary)', color: 'var(--neon-primary)', fontWeight: 'bold', fontSize: '13px' }}>
               <div>ITEM</div><div>ATIVIDADE</div><div>DT. INICIAL</div><div>DT. FINAL</div><div>REALIZADO POR</div><div>SITUAÇÃO</div><div>CLASSIFICAÇÃO</div><div>PEND.</div>
             </div>
 
@@ -182,7 +177,8 @@ const DetalhesAuditoria = () => {
                         onDoubleClick={() => abrirModalDeAtividade(atv)}
                         title="Dê um duplo clique para ver os detalhes da atividade"
                         style={{ 
-                          display: 'grid', gridTemplateColumns: gridTemplate, gap: '10px', padding: '12px 20px', cursor: 'pointer', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', backgroundColor: isSelecionada ? 'rgba(0, 242, 255, 0.15)' : 'transparent', borderLeft: isSelecionada ? '4px solid var(--neon-primary)' : '4px solid transparent', transition: 'background-color 0.2s'
+                          display: 'grid', gridTemplateColumns: gridTemplate, gap: '10px', padding: '12px 20px', cursor: 'pointer', alignItems: 'center', borderBottom: 'var(--glass-border)', backgroundColor: isSelecionada ? 'rgba(0, 135, 95, 0.1)' : 'transparent', borderLeft: isSelecionada ? '4px solid var(--neon-primary)' : '4px solid transparent', transition: 'background-color 0.2s',
+                          color: 'var(--text-bright)'
                         }}
                       >
                         <div style={{ color: 'var(--neon-primary)', fontWeight: 'bold' }}>{numeroDaLinha}</div>
@@ -205,12 +201,12 @@ const DetalhesAuditoria = () => {
         </section>
       </main>
 
-      {/* A JANELA GIGANTE (MODAL DE DETALHES E FÓRUM) */}
+      {/* 🔴 MODAL CORRIGIDO: Agora usa variáveis do tema ao invés de cores fixas */}
       {isModalOpen && atividadeSelecionada && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.85)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(5px)' }}>
-          <div style={{ background: '#0a0f1a', width: '90%', maxWidth: '1200px', height: '90vh', borderRadius: '12px', border: '1px solid var(--neon-primary)', boxShadow: '0 0 30px rgba(0, 242, 255, 0.2)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(3px)' }}>
+          <div style={{ background: 'var(--bg-panel)', width: '90%', maxWidth: '1200px', height: '90vh', borderRadius: '12px', border: '1px solid var(--neon-primary)', boxShadow: '0 0 30px rgba(0, 0, 0, 0.3)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             
-            <div style={{ padding: '20px', borderBottom: '1px solid rgba(0, 242, 255, 0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#050a14' }}>
+            <div style={{ padding: '20px', borderBottom: 'var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-inset)' }}>
               <div>
                 <h2 style={{ margin: 0, color: 'var(--neon-primary)', fontSize: '20px' }}>Atividade: {atividadeSelecionada.atividade}</h2>
                 <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Grupo: {cabecalho.grupo} | Item: {atividadeSelecionada.item}</span>
@@ -218,41 +214,41 @@ const DetalhesAuditoria = () => {
               <button onClick={() => setIsModalOpen(false)} style={{ background: 'transparent', border: 'none', color: '#ff4444', fontSize: '24px', cursor: 'pointer', fontWeight: 'bold' }}>✖</button>
             </div>
 
-            <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)', background: '#0a0f1a' }}>
+            <div style={{ display: 'flex', borderBottom: 'var(--glass-border)', background: 'var(--bg-inset)' }}>
               <button 
                 onClick={() => setActiveTab('detalhes')}
-                style={{ flex: 1, padding: '15px', background: activeTab === 'detalhes' ? 'rgba(0, 242, 255, 0.05)' : 'transparent', border: 'none', borderBottom: activeTab === 'detalhes' ? '2px solid var(--neon-primary)' : '2px solid transparent', color: activeTab === 'detalhes' ? 'var(--neon-primary)' : '#888', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'all 0.3s' }}>
+                style={{ flex: 1, padding: '15px', background: activeTab === 'detalhes' ? 'rgba(0, 135, 95, 0.05)' : 'transparent', border: 'none', borderBottom: activeTab === 'detalhes' ? '2px solid var(--neon-primary)' : '2px solid transparent', color: activeTab === 'detalhes' ? 'var(--neon-primary)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'all 0.3s' }}>
                 📋 Detalhes da Atividade
               </button>
               <button 
                 onClick={() => setActiveTab('anotacoes')}
-                style={{ flex: 1, padding: '15px', background: activeTab === 'anotacoes' ? 'rgba(0, 242, 255, 0.05)' : 'transparent', border: 'none', borderBottom: activeTab === 'anotacoes' ? '2px solid var(--neon-primary)' : '2px solid transparent', color: activeTab === 'anotacoes' ? 'var(--neon-primary)' : '#888', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'all 0.3s' }}>
+                style={{ flex: 1, padding: '15px', background: activeTab === 'anotacoes' ? 'rgba(0, 135, 95, 0.05)' : 'transparent', border: 'none', borderBottom: activeTab === 'anotacoes' ? '2px solid var(--neon-primary)' : '2px solid transparent', color: activeTab === 'anotacoes' ? 'var(--neon-primary)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'all 0.3s' }}>
                 💬 Anotações/Revisões {anotacoes.length > 0 && <span style={{background: '#ff4444', color: '#fff', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', marginLeft: '5px'}}>{anotacoes.length}</span>}
               </button>
             </div>
 
-            <div style={{ padding: '20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ padding: '20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '20px', background: 'var(--bg-panel)' }}>
               
               {activeTab === 'detalhes' && (
                 <>
-                  <div style={{ border: '1px dashed rgba(0, 242, 255, 0.4)', padding: '15px', borderRadius: '8px', background: 'rgba(0, 242, 255, 0.02)' }}>
+                  <div style={{ border: '1px dashed var(--neon-primary)', padding: '15px', borderRadius: '8px', background: 'rgba(0, 135, 95, 0.02)' }}>
                     <h4 style={{ margin: '0 0 10px 0', color: 'var(--neon-primary)' }}>1. Detalhes da Atividade (Testes)</h4>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
-                      <div style={{ background: '#111827', padding: '10px', borderRadius: '6px', color: '#fff' }}><strong style={{color: '#ffc107'}}>Testes Realizados:</strong>{renderizarHTML(atividadeSelecionada.teste)}</div>
-                      <div style={{ background: '#111827', padding: '10px', borderRadius: '6px', color: '#fff' }}><strong style={{color: '#ffc107'}}>Extensão / Amostra:</strong>{renderizarHTML(atividadeSelecionada.extensao)}</div>
+                      <div style={{ background: 'var(--bg-inset)', border: 'var(--glass-border)', padding: '10px', borderRadius: '6px', color: 'var(--text-bright)' }}><strong style={{color: '#d39e00'}}>Testes Realizados:</strong>{renderizarHTML(atividadeSelecionada.teste)}</div>
+                      <div style={{ background: 'var(--bg-inset)', border: 'var(--glass-border)', padding: '10px', borderRadius: '6px', color: 'var(--text-bright)' }}><strong style={{color: '#d39e00'}}>Extensão / Amostra:</strong>{renderizarHTML(atividadeSelecionada.extensao)}</div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                      <div style={{ background: '#111827', padding: '10px', borderRadius: '6px', color: '#fff' }}><strong style={{color: '#ffc107'}}>Critério / Período:</strong>{renderizarHTML(atividadeSelecionada.criterio)}</div>
-                      <div style={{ background: '#111827', padding: '10px', borderRadius: '6px', color: '#fff' }}><strong style={{color: '#ffc107'}}>Veredito (Observação):</strong>{renderizarHTML(atividadeSelecionada.observacao)}</div>
+                      <div style={{ background: 'var(--bg-inset)', border: 'var(--glass-border)', padding: '10px', borderRadius: '6px', color: 'var(--text-bright)' }}><strong style={{color: '#d39e00'}}>Critério / Período:</strong>{renderizarHTML(atividadeSelecionada.criterio)}</div>
+                      <div style={{ background: 'var(--bg-inset)', border: 'var(--glass-border)', padding: '10px', borderRadius: '6px', color: 'var(--text-bright)' }}><strong style={{color: '#d39e00'}}>Veredito (Observação):</strong>{renderizarHTML(atividadeSelecionada.observacao)}</div>
                     </div>
                   </div>
 
-                  <div style={{ border: '1px dashed rgba(255, 68, 68, 0.4)', padding: '15px', borderRadius: '8px', background: 'rgba(255, 68, 68, 0.02)' }}>
+                  <div style={{ border: '1px dashed #ff4444', padding: '15px', borderRadius: '8px', background: 'rgba(255, 68, 68, 0.02)' }}>
                     <h4 style={{ margin: '0 0 10px 0', color: '#ff4444' }}>2. Pendências / Irregularidades</h4>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px' }}>
-                      <div style={{ background: '#111827', padding: '10px', borderRadius: '6px', color: '#fff' }}><strong style={{color: '#ff4444'}}>Não Conformidade:</strong>{renderizarHTML(atividadeSelecionada.naoConformidade)}</div>
-                      <div style={{ background: '#111827', padding: '10px', borderRadius: '6px', color: '#fff' }}><strong style={{color: '#ff4444'}}>Reincidente?</strong>{renderizarHTML(atividadeSelecionada.reincidente)}</div>
-                      <div style={{ background: '#111827', padding: '10px', borderRadius: '6px', color: '#fff' }}><strong style={{color: '#ff4444'}}>Recomendação:</strong>{renderizarHTML(atividadeSelecionada.recomendacao)}</div>
+                      <div style={{ background: 'var(--bg-inset)', border: 'var(--glass-border)', padding: '10px', borderRadius: '6px', color: 'var(--text-bright)' }}><strong style={{color: '#ff4444'}}>Não Conformidade:</strong>{renderizarHTML(atividadeSelecionada.naoConformidade)}</div>
+                      <div style={{ background: 'var(--bg-inset)', border: 'var(--glass-border)', padding: '10px', borderRadius: '6px', color: 'var(--text-bright)' }}><strong style={{color: '#ff4444'}}>Reincidente?</strong>{renderizarHTML(atividadeSelecionada.reincidente)}</div>
+                      <div style={{ background: 'var(--bg-inset)', border: 'var(--glass-border)', padding: '10px', borderRadius: '6px', color: 'var(--text-bright)' }}><strong style={{color: '#ff4444'}}>Recomendação:</strong>{renderizarHTML(atividadeSelecionada.recomendacao)}</div>
                     </div>
                   </div>
                 </>
@@ -263,34 +259,34 @@ const DetalhesAuditoria = () => {
                   {loadingAnotacoes ? (
                     <div style={{ textAlign: 'center', color: 'var(--neon-primary)', padding: '40px' }}>Carregando histórico de anotações...</div>
                   ) : anotacoes.length === 0 ? (
-                    <div style={{ textAlign: 'center', color: '#666', padding: '60px', background: '#111827', borderRadius: '8px', border: '1px dashed #333' }}>
+                    <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '60px', background: 'var(--bg-inset)', borderRadius: '8px', border: '1px dashed var(--glass-border)' }}>
                       <h3>Nenhuma interação registrada.</h3>
                       <p>O histórico de anotações/revisões desta atividade está limpo.</p>
                     </div>
                   ) : (
                     [...anotacoes].reverse().map((ant, idx) => {
                       const isVersaoAtual = idx === 0;
-                      const statusColor = ant.status === 'Concluído' ? '#00ff88' : (ant.status?.includes('Revisor') ? 'var(--neon-secondary)' : '#ffc107');
+                      const statusColor = ant.status === 'Concluído' ? '#28a745' : (ant.status?.includes('Revisor') ? 'var(--neon-secondary)' : '#ffc107');
 
                       return (
                         <div key={ant.id} style={{ 
-                          border: isVersaoAtual ? '1px solid var(--neon-primary)' : '1px solid #333', 
+                          border: isVersaoAtual ? '1px solid var(--neon-primary)' : 'var(--glass-border)', 
                           borderRadius: '12px', padding: '20px', 
-                          background: isVersaoAtual ? 'rgba(0, 242, 255, 0.03)' : '#0d121c',
-                          boxShadow: isVersaoAtual ? '0 0 15px rgba(0,242,255,0.05)' : 'none',
-                          opacity: isVersaoAtual ? 1 : 0.6,
+                          background: isVersaoAtual ? 'rgba(0, 135, 95, 0.05)' : 'var(--bg-inset)',
+                          boxShadow: isVersaoAtual ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
+                          opacity: isVersaoAtual ? 1 : 0.7,
                           transition: 'opacity 0.2s'
                         }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px', marginBottom: '15px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: 'var(--glass-border)', paddingBottom: '12px', marginBottom: '15px' }}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
-                              <span style={{ color: isVersaoAtual ? 'var(--neon-primary)' : '#888', fontWeight: 'bold', fontSize: '18px' }}>
+                              <span style={{ color: isVersaoAtual ? 'var(--neon-primary)' : 'var(--text-muted)', fontWeight: 'bold', fontSize: '18px' }}>
                                 {isVersaoAtual ? '⭐ Versão Atual' : `Versão Histórica ${ant.versao}`}
                               </span>
-                              <span style={{ background: statusColor, color: '#000', padding: '4px 10px', borderRadius: '15px', fontSize: '11px', fontWeight: 'bold' }}>
+                              <span style={{ background: statusColor, color: '#fff', padding: '4px 10px', borderRadius: '15px', fontSize: '11px', fontWeight: 'bold' }}>
                                 {ant.status}
                               </span>
                             </div>
-                            <div style={{ textAlign: 'right', fontSize: '12px', color: '#888' }}>
+                            <div style={{ textAlign: 'right', fontSize: '12px', color: 'var(--text-muted)' }}>
                               🗓️ {ant.dataHora} <br/> 👤 {ant.usuario}
                             </div>
                           </div>
@@ -298,14 +294,14 @@ const DetalhesAuditoria = () => {
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                             <div style={{ borderLeft: '3px solid #ff4444', paddingLeft: '15px' }}>
                               <strong style={{ color: '#ff4444', fontSize: '13px', display: 'block', marginBottom: '8px' }}>💬 OBSERVAÇÃO DO REVISOR</strong>
-                              <div style={{ background: '#050a14', padding: '15px', borderRadius: '8px', minHeight: '80px', color: '#ddd', fontSize: '14px', border: '1px solid #222' }}>
+                              <div style={{ background: 'var(--bg-panel)', padding: '15px', borderRadius: '8px', minHeight: '80px', color: 'var(--text-bright)', fontSize: '14px', border: 'var(--glass-border)' }}>
                                 {renderizarHTML(ant.obsRevisor)}
                               </div>
                             </div>
                             
-                            <div style={{ borderLeft: '3px solid #00ff88', paddingLeft: '15px' }}>
-                              <strong style={{ color: '#00ff88', fontSize: '13px', display: 'block', marginBottom: '8px' }}>💬 OBSERVAÇÃO DO AUDITOR</strong>
-                              <div style={{ background: '#050a14', padding: '15px', borderRadius: '8px', minHeight: '80px', color: '#ddd', fontSize: '14px', border: '1px solid #222' }}>
+                            <div style={{ borderLeft: '3px solid #28a745', paddingLeft: '15px' }}>
+                              <strong style={{ color: '#28a745', fontSize: '13px', display: 'block', marginBottom: '8px' }}>💬 OBSERVAÇÃO DO AUDITOR</strong>
+                              <div style={{ background: 'var(--bg-panel)', padding: '15px', borderRadius: '8px', minHeight: '80px', color: 'var(--text-bright)', fontSize: '14px', border: 'var(--glass-border)' }}>
                                 {renderizarHTML(ant.obsAuditor)}
                               </div>
                             </div>
@@ -324,11 +320,11 @@ const DetalhesAuditoria = () => {
               )}
             </div>
 
-            <div style={{ padding: '20px', borderTop: '1px solid rgba(0, 242, 255, 0.3)', background: '#050a14', display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
-              <button onClick={() => setIsModalOpen(false)} style={{ background: 'transparent', color: '#ccc', border: '1px solid #555', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
+            <div style={{ padding: '20px', borderTop: 'var(--glass-border)', background: 'var(--bg-inset)', display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
+              <button onClick={() => setIsModalOpen(false)} style={{ background: 'transparent', color: 'var(--text-bright)', border: '1px solid var(--text-muted)', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
                 Fechar Visualização
               </button>
-              <button style={{ background: 'var(--neon-primary)', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => alert('Em breve ativaremos a Edição (Motor de Salvamento)!')}>
+              <button style={{ background: 'var(--neon-primary)', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => alert('Em breve ativaremos a Edição (Motor de Salvamento)!')}>
                 ✏️ Habilitar Edição
               </button>
             </div>

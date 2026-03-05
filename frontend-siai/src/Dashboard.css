@@ -1,4 +1,6 @@
-/* --- VARIÁVEIS DO TEMA NEO-TACTILE --- */
+/* =========================================
+   VARIÁVEIS DO TEMA NEO-TACTILE (DARK)
+   ========================================= */
 :root {
   /* Cores de Fundo */
   --bg-app: #0a0e17;         /* Fundo principal super escuro */
@@ -17,23 +19,26 @@
   --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Sombra profunda para dar 3D */
 }
 
-/* --- ESTRUTURA GERAL (DARK MODE) --- */
+/* =========================================
+   ESTRUTURA GERAL
+   ========================================= */
 body, html {
   background-color: var(--bg-app);
   color: var(--text-bright);
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
+  /* 🔴 CORREÇÃO 1: Transição suave do fundo inteiro da tela */
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .dashboard-container {
   display: flex;
   height: 100vh;
-  background: radial-gradient(circle at top right, rgba(0, 242, 255, 0.1), transparent 40%),
-              var(--bg-app); 
+  background: radial-gradient(circle at top right, rgba(0, 242, 255, 0.1), transparent 40%), var(--bg-app); 
 }
 
-/* --- SIDEBAR REFORMULADA --- */
+/* --- SIDEBAR --- */
 .sidebar {
   width: 260px;
   background: var(--bg-panel);
@@ -42,12 +47,12 @@ body, html {
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box; /* Garante que o padding não quebre a largura */
+  box-sizing: border-box; 
 }
 
 .sidebar-header {
   padding-bottom: 25px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Linha divisória sutil */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
   margin-bottom: 25px;
 }
 
@@ -67,56 +72,12 @@ body, html {
   font-weight: 600;
 }
 
-/* O Segredo do alinhamento: Flex Column */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Espaço perfeito entre os botões */
-  flex-grow: 1; /* Permite empurrar o botão Sair pro fundo */
+  gap: 12px; 
+  flex-grow: 1; 
 }
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-muted);
-  background: transparent;
-  border: 1px solid transparent;
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-weight: 500;
-  font-size: 15px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-.nav-item:hover {
-  background: rgba(0, 242, 255, 0.05);
-  color: var(--neon-primary);
-}
-
-.nav-item.active {
-  background: rgba(0, 242, 255, 0.1);
-  color: var(--neon-primary);
-  border: var(--glass-border);
-  box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.05);
-}
-
-/* Tratamento especial pro botão de Sair */
-.nav-item.logout {
-  color: #ff6b6b;
-  border: 1px solid rgba(255, 107, 107, 0.1);
-}
-
-.nav-item.logout:hover {
-  background: rgba(255, 107, 107, 0.1);
-  color: #ff8787;
-  border-color: rgba(255, 107, 107, 0.4);
-  box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
-}
-
 
 /* --- CONTEÚDO PRINCIPAL --- */
 .main-content {
@@ -133,7 +94,7 @@ body, html {
   color: var(--text-muted);
 }
 
-/* --- CARDS DE ESTATÍSTICAS (Efeitos hover) --- */
+/* --- CARDS DE ESTATÍSTICAS --- */
 .stat-card {
   transition: transform 0.3s ease;
 }
@@ -142,7 +103,6 @@ body, html {
   transform: translateY(-5px);
   box-shadow: var(--neon-glow) !important;
 }
-
 
 /* --- TABELA (VISUAL CLEAN DARK) --- */
 .recent-audits {
@@ -227,7 +187,115 @@ table td {
   box-shadow: var(--neon-glow);
 }
 
-/* Alinhamento de placeholder nos inputs escuros */
+/* 🔴 CORREÇÃO 2: Placeholders dinâmicos */
 ::placeholder {
   color: rgba(255, 255, 255, 0.3) !important;
+}
+[data-theme="light"] ::placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+
+/* =========================================
+   🌓 TEMA CLARO (FLAT / CORPORATIVO SAP FIORI)
+   ========================================= */
+
+[data-theme="light"] {
+  --bg-panel: #ffffff;
+  --bg-inset: #ffffff;
+  
+  --text-bright: #32363a;
+  --text-muted: #6a6d70;
+  
+  --neon-primary: #00875f; /* Verde COMIGO Oficial */
+  --neon-secondary: #0a6ed1; /* Azul SAP Oficial */
+  
+  --glass-border: 1px solid #e5e5e5;
+  --panel-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra elegante e difusa */
+  --glass-blur: none;
+}
+
+[data-theme="light"] body {
+  background-color: #f7f7f7;
+  background-image: none;
+}
+
+/* Todos os painéis com transição suave */
+.dashboard-container *, .main-content *, aside * {
+  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.3s ease;
+}
+
+/* Tabela com aparência corporativa estrita */
+[data-theme="light"] table {
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+[data-theme="light"] table thead th {
+  background: #f5f5f5 !important;
+  color: #32363a !important;
+  border-bottom: 2px solid #d1d6db !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] table td {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+[data-theme="light"] table tbody tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+[data-theme="light"] table tbody tr:hover td {
+  background-color: #f0f7f4 !important; 
+}
+
+/* Ajuste fino nos Inputs e Selects */
+[data-theme="light"] input, 
+[data-theme="light"] select {
+  background-color: #ffffff !important;
+  border: 1px solid #89919a !important;
+  color: #32363a !important;
+  box-shadow: none !important; 
+}
+
+[data-theme="light"] input:focus, 
+[data-theme="light"] select:focus {
+  border-color: #00875f !important;
+  box-shadow: 0 0 0 2px rgba(0, 135, 95, 0.2) !important;
+}
+
+/* 🔴 CORREÇÃO 3: Botão da tabela no tema claro */
+[data-theme="light"] .btn-detalhes {
+  background: rgba(0, 135, 95, 0.1);
+  color: var(--neon-primary);
+  border-color: var(--neon-primary);
+  box-shadow: none;
+}
+
+[data-theme="light"] .btn-detalhes:hover {
+  background: var(--neon-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 135, 95, 0.3);
+}
+
+/* 🔴 CORREÇÃO 4: Textos Laterais (Removido o !important forçado que quebrava o botão vermelho Sair) */
+[data-theme="light"] aside h2 {
+  text-shadow: none;
+}
+
+/* Barras de Rolagem Customizadas pro Tema Claro */
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #00875f; 
+  border-radius: 6px;
+  border: 2px solid #f5f5f5;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #006b4a;
 }
