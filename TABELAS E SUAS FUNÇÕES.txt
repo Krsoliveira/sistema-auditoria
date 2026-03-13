@@ -1,0 +1,15 @@
+http://127.0.0.1:8000/home/
+http://127.0.0.1:8000/
+
+FROM [Auditoria].[Auditoria].[Relatorio]  - composição do dash dos relatórios. - (reaId) - conecta com as atividades  
+FROM [Auditoria].[Auditoria].[Relatorio] - Também te os cabeçalhos padrão.
+FROM [Auditoria].[Auditoria].[Unidade] - Também te os cabeçalhos padrão.
+FROM [Auditoria].[Auditoria].[Cronograma] - indica o planejamento dos relatórios
+FROM [Auditoria].[Auditoria].[CronogramaSituacao] - indique em que etapa está o relatório.
+FROM [Auditoria].[Auditoria].[zaudGrupo] - Indica a qual grupo pertence o relatório.
+FROM [Auditoria].[Auditoria].[RelatorioAtividade] - Indica as atividades que compõem o relatório. (reaId) - Conecta com o relatório 
+
+d:\FERRAMENTA_AUDITOR_PRO\venv\Scripts\Activate.ps1
+flask run
+
+

@@ -1,4 +1,10 @@
 package br.com.siai.auditoria_backend.model;
 
-public class BancoHorasResumoDTO {
+public interface BancoHorasResumoDTO {
+    String getCargo();
+    Integer getColaboradorId();
+    Integer getCompensacoesMinutos(); // Débito total
+    Integer getHorasExtrasMinutos();  // Crédito total
+    String getNome();
+    Integer getSaldoMinutos();        // Crédito - Débito
 }

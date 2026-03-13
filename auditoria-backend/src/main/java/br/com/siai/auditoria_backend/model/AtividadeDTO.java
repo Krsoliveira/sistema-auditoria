@@ -1,6 +1,7 @@
 package br.com.siai.auditoria_backend.model;
 
 public interface AtividadeDTO {
+    Integer getReaId();
     Integer getItem();
     String getAtividade();
     String getDataInicial();

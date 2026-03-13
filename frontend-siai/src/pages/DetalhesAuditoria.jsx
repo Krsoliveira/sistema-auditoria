@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar'; 
+import BotaoAnexoLegado from '../components/BotaoAnexoLegado'; // <-- Importação do Botão
 import '../Dashboard.css';
 
 const DetalhesAuditoria = () => {
@@ -126,6 +127,7 @@ const DetalhesAuditoria = () => {
 
       <main className="main-content" style={{ flex: 1, padding: '30px', overflowY: 'auto' }}>
         
+        {/* CABEÇALHO COM O NOVO BOTÃO */}
         <header style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
           <button onClick={() => navigate(-1)} style={{ background: 'rgba(0, 135, 95, 0.1)', border: '1px solid var(--neon-primary)', color: 'var(--neon-primary)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
             ← Voltar
@@ -133,6 +135,11 @@ const DetalhesAuditoria = () => {
           <div>
             <h1 style={{ margin: 0, color: 'var(--text-bright)', fontSize: '24px' }}>Detalhes da Auditoria</h1>
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>ID de Referência: {id}</p>
+          </div>
+          
+          {/* COMPONENTE DO ANEXO ALINHADO À DIREITA */}
+          <div style={{ marginLeft: 'auto' }}>
+            <BotaoAnexoLegado relatorioId={id} />
           </div>
         </header>
 
@@ -201,7 +208,6 @@ const DetalhesAuditoria = () => {
         </section>
       </main>
 
-      {/* 🔴 MODAL CORRIGIDO: Agora usa variáveis do tema ao invés de cores fixas */}
       {isModalOpen && atividadeSelecionada && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(3px)' }}>
           <div style={{ background: 'var(--bg-panel)', width: '90%', maxWidth: '1200px', height: '90vh', borderRadius: '12px', border: '1px solid var(--neon-primary)', boxShadow: '0 0 30px rgba(0, 0, 0, 0.3)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>

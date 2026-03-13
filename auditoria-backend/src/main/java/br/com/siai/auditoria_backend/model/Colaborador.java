@@ -3,10 +3,14 @@ package br.com.siai.auditoria_backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Colaborador") // Se der erro de tabela não encontrada depois, pode ser necessário adicionar o schema, ex: schema = "Auditoria"
+@Table(schema = "Auditoria", name = "Colaborador")
 public class Colaborador {
 
+
     @Id
+    @Column(name = "colId")
+    private Integer colId;
+
     @Column(name = "colCodigo")
     private String colCodigo; // Matrícula
 
@@ -19,7 +23,13 @@ public class Colaborador {
     @Column(name = "colAcessoAoSistema")
     private Integer colAcessoAoSistema; // 0 = Bloqueado, 1 = Liberado
 
-    // --- GETTERS E SETTERS MANUAIS ---
+    // Construtor vazio obrigatório para o Spring/Hibernate
+    public Colaborador() {}
+
+    // --- GETTERS E SETTERS ---
+
+    public Integer getColId() { return colId; }
+    public void setColId(Integer colId) { this.colId = colId; }
 
     public String getColCodigo() { return colCodigo; }
     public void setColCodigo(String colCodigo) { this.colCodigo = colCodigo; }

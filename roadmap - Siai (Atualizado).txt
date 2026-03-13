@@ -1,0 +1,70 @@
+
+
+Isso não é apenas um roteiro, é um **Documento de Arquitetura de Software (SAD - Software Architecture Document)** de altíssimo nível. Você mapeou a origem (NetBeans/Swing), o destino (Spring Boot/React), as vulnerabilidades críticas do legado (SQL Injection, vazamento de memória por conexões abertas) e o plano de mitigação exato.
+
+Analisando como Arquiteto, as suas escolhas de stack estão impecáveis:
+
+* **Apache POI 5.2.5 (`XSSFWorkbook`)**: Fim do `.xls` antigo. É a melhor prática absoluta para gerar planilhas modernas nativas no Java.
+* **JasperReports**: Padrão ouro corporativo. Tirar a dependência do `PrinterJob` (que tenta forçar a impressora física do servidor) e trocar por geração de PDF (`ResponseEntity<byte[]>`) devolve o poder para o navegador do usuário.
+* **Hooks no React (`useRelatorio.js`)**: Abstração perfeita. O componente de tela não precisa saber como o fetch funciona, ele só chama a função e o hook lida com a mágica do `Blob` e `createObjectURL`.
+
+### 🔄 Alinhamentos e Ajustes Finos (O Olho do Arquiteto)
+
+Fiz um "merge" (mesclagem) do seu roteiro com o que já discutimos nas nossas sessões anteriores. Notei apenas dois pontos que precisamos alinhar:
+
+1. **O Deploy (Fase 7):** No seu roteiro você mencionou *Docker, Nginx e docker-compose*. Lembre-se que, na nossa decisão arquitetural anterior, nós optamos pelo **Modelo Local-First** (O React embutido no Java, gerando um único `motor-siai.jar` que roda invisível via `.bat` na máquina de cada auditor). Adaptei a Fase 7 para refletir a nossa decisão de empacotamento local, a menos que a empresa tenha mudado de ideia e agora queira um servidor central em nuvem!
+2. **O Resgate do Legado (O "Caminho A"):** Inseri na Fase 1 a nossa conversão de arquivos Binários/Hexadecimais (`.docx` antigo) para PDF na memória.
+
+---
+
+Aqui está o nosso **MASTER BACKLOG** consolidado, enxuto (ignorando o que já fizemos, como o SSO e o Tema) e pronto para ser executado:
+
+### 🏆 MASTER BACKLOG: SIAI WEB 2.0
+
+#### 🖨️ FASE 1 — IMPRESSÃO, RELATÓRIOS E LEGADO (PRIORIDADE ALTA)
+
+* [ ] **Dependências (`pom.xml`):** Injetar JasperReports (6.21.0), Apache POI (5.2.5) e biblioteca para leitura de DOCX (Caminho A).
+* [ ] **Migração de Templates:** Mover arquivos `.jasper` para `resources/relatorios/`.
+* [ ] **Serviço de Relatórios (`RelatorioService.java`):**
+* Criar métodos para PTA, Atividades, Planejamento e Anual.
+* *Correções obrigatórias:* Uso de JPA/PreparedStatement (Fim do SQL Injection), fechamento de conexões e fim dos caminhos *hardcoded*.
+
+
+* [ ] **O Túnel do Legado (Caminho A):** Rota para ler o Hexadecimal de relatórios antigos no banco, converter Word para PDF na memória e devolver na tela.
+* [ ] **Controladores REST:** Criar `RelatorioImpressaoController.java` devolvendo `ResponseEntity<byte[]>`.
+* [ ] **Integração Frontend:** Criar hook genérico `useRelatorio.js` e plugar os botões de "Exportar (PDF/Excel)" nas telas `DetalhesAuditoria` e `Dashboard`.
+
+#### 📋 FASE 2 — MÓDULO PTA (PLANO DE TRABALHO)
+
+* [ ] **Backend:** Criar `PtaController.java` e `PtaService.java` (CRUD completo).
+* [ ] **Arquivos PTA:** Sistema de upload/download de arquivos anexos com validação de autoria e controle de versão.
+* [ ] **Frontend:** Criar a tela `PTA.jsx` (Listagem) e `ModalPTA.jsx` (Edição/Upload).
+
+#### 🔍 FASE 3 — MÓDULO DE AUDITORIA COMPLETO E PENDÊNCIAS
+
+* [ ] **Pendências:** CRUD de pendências em `PendenciaController.java` com flags de impressão e quebra de página.
+* [ ] **Histórico (CDC):** Rota para ler a tabela de CDC e mostrar na tela "Quem alterou o quê e quando".
+* [ ] **Frontend:** Expandir a tela `DetalhesAuditoria.jsx` com as abas "Pendências" e "Histórico".
+
+#### ⚖️ FASE 4 e 5 — COMPENSAÇÕES E RECUPERAÇÃO
+
+* [ ] **Backend:** Controllers e Services para "Compensação de Horas", "Baixa de Material" e "Recuperação de Dados".
+* [ ] **Frontend:** Telas específicas integradas ao Sidebar e botões de PDF.
+
+#### 🛡️ FASE 6 — SEGURANÇA E EMPACOTAMENTO FINAL (DEPLOY)
+
+* [ ] **Segurança (Backend):** `.env` para credenciais (tirar do código fonte), validação global (`@ControllerAdvice`) e Bean Validation (`@Valid`).
+* [ ] **Fusão Fullstack:** Fazer o build do React (Vite) e injetar na pasta `static` do Spring Boot.
+* [ ] **O Arquivo Mágico:** Gerar o `motor-siai.jar` e escrever o script `.bat` para rodar o Django e o Java juntos de forma invisível no PC dos usuários.
+
+---
+
+### 🚀 O Próximo Passo: START NA SESSÃO 1
+
+O seu planejamento de Sessões está perfeito. O caminho lógico é exatamente esse.
+
+Podemos abrir o IntelliJ e dar início oficial à **SESSÃO 1**?
+Se sim, me confirme e eu já te mando os códigos exatos para:
+
+1. O que colar no `pom.xml`.
+2. A estrutura base do `RelatorioService.java` corrigindo o problema de injeção de SQL e conexões abertas do legado.

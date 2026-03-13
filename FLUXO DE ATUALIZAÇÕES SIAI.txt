@@ -1,0 +1,71 @@
+🗺️ Mapa de Dados: Sistema de Auditoria (SIAI Web)
+O nosso Backend foi desenhado para realizar consultas nativas (Native Queries) altamente otimizadas no SQL Server legado, garantindo performance e integridade. Abaixo está o mapeamento de como as tabelas "conversam" entre si.
+
+1. Módulo: Dashboard (Visão Geral)
+Objetivo: Listar todos os relatórios de auditoria filtrados por ano e alimentar os cards de estatísticas.
+
+Tabelas Envolvidas: Cronograma (Raiz) ↔ Relatorio ↔ UnidadeGrupo ↔ zaudGrupo.
+
+Como conversam (Relacionamentos):
+
+O Cronograma liga-se ao Relatorio através do croId.
+
+O Cronograma liga-se à unidade corporativa (UnidadeGrupo) e ao seu respectivo nome (zaudGrupo).
+
+Inteligência da Query: Extrai dinamicamente os anos disponíveis (YEAR(croDataInicialP)) e centraliza o status da auditoria num único pacote JSON para o Frontend calcular as porcentagens de "Concluído" e "Em Andamento".
+
+2. Módulo: Cabeçalho da Auditoria (Ficha Técnica)
+Objetivo: Trazer os dados vitais (Gestor, Número, Situação) para o topo da tela de Detalhes.
+
+Tabelas Envolvidas: Relatorio (Raiz) ↔ Cronograma ↔ UnidadeGrupo ↔ zaudGrupo.
+
+Como conversam (Relacionamentos): * A busca é feita a partir do ID da URL (croId), que viaja do Frontend para o Backend.
+
+Inteligência da Query: Uso do comando TOP 1 para criar uma "Barreira Sanitária". Como o banco legado possuía multiplicidade nos JOINs de grupos, esta query garante que o React receba apenas um objeto limpo e único, evitando a quebra da tela.
+
+3. Módulo: Detalhes e Atividades (Os Testes)
+Objetivo: Listar todos os testes, critérios, amostras e não-conformidades de uma auditoria específica.
+
+Tabelas Envolvidas: RelatorioAtividade (Raiz) ↔ Relatorio.
+
+Como conversam (Relacionamentos):
+
+O Java recebe o croId, cruza com a tabela Relatorio para descobrir o relId secreto, e então busca todas as RelatorioAtividade que pertencem àquele relId. (Relação 1 para Muitos).
+
+Inteligência da Query: Ordenação estrita pelo campo reaItem (ORDER BY ra.reaItem ASC), garantindo que a "Atividade 0" (Geral) e os itens 1, 2, 3 apareçam na ordem exata que o auditor preencheu no sistema antigo.
+
+4. Módulo: Fórum de Anotações / Revisões
+Objetivo: Montar a linha do tempo (Audit Trail) de conversas entre o Auditor de campo e o Revisor.
+
+Tabela Envolvida: RelatorioAtividadeAnotacao.
+
+Como conversam (Relacionamentos):
+
+Esta tabela é "filha" da tabela de Atividades. O elo de ligação é o reaId (Identificador da Atividade). Ao dar um duplo clique na tela, o React envia o reaId e o Java devolve o histórico completo.
+
+Inteligência da Query: * Fusão de Data e Hora no motor do banco: CONVERT(VARCHAR(10), antObsData, 103) + ' ' + CONVERT(VARCHAR(8), antObsTime, 108).
+
+Ordenação pelo número da versão (antItem), permitindo ao React desenhar o chat cronológico separando quem é Revisor e quem é Auditor.
+
+5. Módulo: Banco de Horas
+Objetivo: Gerenciar os créditos (horas extras) e débitos (compensações) dos funcionários num painel gerencial.
+
+Tabelas Envolvidas: Colaborador ↔ Cargo ↔ HoraExtra ↔ Compensacao.
+
+Como conversam (Relacionamentos):
+
+O coração deste módulo é o colId (ID do Colaborador). Ele é a Chave Primária que liga quem a pessoa é (Colaborador/Cargo), o que ela ganhou (HoraExtra) e o que ela gastou (Compensacao).
+
+Inteligência da Query (O Motor Matemático):
+
+Painel de Resumo: Criamos Common Table Expressions (CTEs) no SQL para converter formatos TIME (ex: 08:45:00) em minutos inteiros (DATEDIFF(MINUTE...)), somar tudo de forma segura, e calcular o Saldo Final.
+
+Extrato Detalhado: Usamos o poderoso comando UNION ALL para fundir duas tabelas distintas (HoraExtra e Compensacao) numa única linha do tempo financeira, etiquetando dinamicamente o que é "CREDITO" e o que é "DEBITO".
+
+------------ RESUMO-----------------
+
+Diagrama de Entidade-Relacionamento (DER) simplificado: Mostrando as caixinhas conectadas (Cronograma ➔ Relatorio ➔ Atividade ➔ Anotacao).
+
+Destaque do "Antes e Depois": Mostrar como a arquitetura do "Java/Swing antigo" funcionava direto no banco, contra a nova arquitetura (React ↔ API Rest (Spring Boot) ↔ SQL Server).
+
+Fluxograma de Dados: Explicar visualmente como um clique na tabela do React viaja até o SQL Server e volta formatado.

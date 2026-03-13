@@ -19,12 +19,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // Ativa o suporte a CORS
-                .csrf(csrf -> csrf.disable())    // Desativa CSRF para facilitar APIs REST
+                .cors(Customizer.withDefaults()) // Mantém o CORS liberado para o React
+                .csrf(csrf -> csrf.disable())    // Desativa proteção CSRF para APIs locais
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/relatorios/**").permitAll()           // Libera rotas de relatórios
-                        .requestMatchers("/api/relatorio-atividade/**").permitAll()   // 🔓 Libera rotas de atividades
-                        .anyRequest().authenticated()
+                        // 🔴 CIRURGIA AQUI: Liberando TODAS as rotas para podermos desenvolver em paz!
+                        .anyRequest().permitAll()
                 );
         return http.build();
     }
@@ -32,7 +31,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*")); // Permite qualquer origem (React)
+        configuration.setAllowedOrigins(Arrays.asList("*")); // Permite o React (porta 5173)
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

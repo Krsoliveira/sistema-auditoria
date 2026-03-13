@@ -1,0 +1,26 @@
+🗺️ NOSSO MAPA DE RELACIONAMENTOS (V5) - A GRANDE TEIA
+1. [Auditoria].[Relatorio] (A Capa)
+🔑 PK: relId | 🔗 FK: croId (Cronograma).
+
+2. [Auditoria].[RelatorioAtividade] (O Corpo / Atividade Oficial e Atual)
+🔑 PK: reaId | 🔗 FK: relId (Liga ao Relatório).
+
+3. [Auditoria].[RelatorioAtividadeAnotacao] (O Fórum / Revisão)
+🔑 PK: antId | 🔗 FK: reaId (Liga à Atividade).
+
+Guarda a conversa entre o chefe e o auditor.
+
+4. [Auditoria].[RelatorioAtividadeAnexo] (O Cofre / Evidências)
+🔑 PK: raaId | 🔗 FK: reaId (Liga à Atividade).
+
+Guarda os bytes de PDFs e planilhas Excel.
+
+5. [Auditoria].[RelatorioAtividade...] (A Equipe)
+🔑 PK: extId | 🔗 FK: reaId, colId
+
+Permite que 2 ou mais auditores assinem a mesma atividade.
+
+6. [Auditoria].[RelatorioAtividadeHistorico] (NOVA!) (A Máquina do Tempo)
+🔑 PK: rahId | 🔗 FK: reaId
+
+Guarda o histórico de edições. Responde à pergunta: "Quem apagou aquele texto que estava aqui ontem?"
