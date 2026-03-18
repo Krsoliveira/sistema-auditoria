@@ -71,6 +71,8 @@ const Dashboard = () => {
   // 🔴 MOSTRANDO A PULSEIRA VIP AO BUSCAR OS RELATÓRIOS
   useEffect(() => {
     if (!anoFiltro) return;
+
+    const controller = new AbortController();
     setCarregando(true);
     setErro(null);
 
@@ -80,9 +82,8 @@ const Dashboard = () => {
     }
 
     fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${tokenJWT}`
-      }
+      headers: { 'Authorization': `Bearer ${tokenJWT}` },
+      signal: controller.signal
     })
       .then((response) => {
         if (!response.ok) throw new Error('Falha ao buscar dados do servidor');
@@ -95,10 +96,13 @@ const Dashboard = () => {
         setCarregando(false);
       })
       .catch((error) => {
+        if (error.name === 'AbortError') return;
         console.error('Erro de conexão:', error);
         setErro('Não foi possível carregar as auditorias.');
         setCarregando(false);
       });
+
+    return () => controller.abort();
   }, [anoFiltro, buscaAtiva, paginaAtual, tokenJWT]);
 
   // Ação de disparar a busca no botão ou Enter

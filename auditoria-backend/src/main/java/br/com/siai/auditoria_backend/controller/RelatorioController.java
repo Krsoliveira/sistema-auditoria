@@ -2,6 +2,7 @@ package br.com.siai.auditoria_backend.controller;
 
 import br.com.siai.auditoria_backend.model.DashboardDTO;
 import br.com.siai.auditoria_backend.model.CabecalhoDTO;
+import br.com.siai.auditoria_backend.model.ColaboradorSimpleDTO;
 import br.com.siai.auditoria_backend.repository.RelatorioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,6 +59,17 @@ public class RelatorioController {
             System.err.println(">>> [ERRO] Falha ao listar relatórios: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(500).body("Erro interno ao procurar os relatórios.");
+        }
+    }
+
+    @GetMapping("/{croId}/colaboradores")
+    public ResponseEntity<List<ColaboradorSimpleDTO>> buscarColaboradores(@PathVariable Integer croId) {
+        try {
+            List<ColaboradorSimpleDTO> colaboradores = repository.buscarColaboradoresPorCroId(croId);
+            return ResponseEntity.ok(colaboradores);
+        } catch (Exception e) {
+            System.err.println(">>> [ERRO] Falha ao buscar colaboradores: " + e.getMessage());
+            return ResponseEntity.status(500).build();
         }
     }
 

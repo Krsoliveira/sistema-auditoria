@@ -3,6 +3,7 @@ package br.com.siai.auditoria_backend.repository;
 import br.com.siai.auditoria_backend.model.Relatorio;
 import br.com.siai.auditoria_backend.model.DashboardDTO;
 import br.com.siai.auditoria_backend.model.CabecalhoDTO;
+import br.com.siai.auditoria_backend.model.ColaboradorSimpleDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -176,4 +177,14 @@ public interface RelatorioRepository extends JpaRepository<Relatorio, Integer> {
 
     @Query(value = "SELECT DISTINCT YEAR(croDataInicialP) FROM Cronograma WHERE croDataInicialP IS NOT NULL ORDER BY YEAR(croDataInicialP) DESC", nativeQuery = true)
     List<Integer> buscarAnosDisponiveis();
+
+    // COLABORADORES DO RELATÓRIO: busca todos os auditores de um relatório via zaudRelatorioColaborador
+    @Query(value = """
+        SELECT c.colNome AS colNome, c.colCodigo AS colCodigo
+        FROM zaudRelatorioColaborador zrc
+        JOIN Colaborador c ON zrc.colId = c.colId
+        JOIN Relatorio r ON zrc.relId = r.relId
+        WHERE r.croId = :croId
+    """, nativeQuery = true)
+    List<ColaboradorSimpleDTO> buscarColaboradoresPorCroId(@Param("croId") Integer croId);
 }

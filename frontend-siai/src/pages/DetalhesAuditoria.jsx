@@ -76,10 +76,11 @@ const DetalhesAuditoria = () => {
   const [historicoAberto, setHistoricoAberto] = useState(false);
   const [versaoExpandida, setVersaoExpandida] = useState(null);
 
-  const [cabecalho, setCabecalho] = useState({ 
+  const [cabecalho, setCabecalho] = useState({
     relatorio: '-', numero: '-', gestor: '-', situacao: '-', grupo: '-',
     cabecalho1: '', cabecalho2: '', cabecalho3: '', sugestao: ''
   });
+  const [colaboradoresRelatorio, setColaboradoresRelatorio] = useState([]);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -107,6 +108,18 @@ const DetalhesAuditoria = () => {
           }
         } catch (erroAtividades) {
           console.error("Falha ao buscar atividades:", erroAtividades);
+        }
+
+        try {
+          const resColaboradores = await fetch(`http://localhost:8080/api/relatorios/${id}/colaboradores`, {
+            headers: { 'Authorization': `Bearer ${tokenJWT}` }
+          });
+          if (resColaboradores.ok) {
+            const dataCol = await resColaboradores.json();
+            setColaboradoresRelatorio(Array.isArray(dataCol) ? dataCol : []);
+          }
+        } catch (erroCol) {
+          console.error("Falha ao buscar colaboradores:", erroCol);
         }
 
         try {
@@ -222,6 +235,17 @@ const DetalhesAuditoria = () => {
           <div><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Total Itens</span><br/><strong style={{ color: 'var(--text-bright)' }}>{atividades.length}</strong></div>
         </section>
 
+        {colaboradoresRelatorio.length > 0 && (
+          <section style={{ background: 'var(--bg-panel)', padding: '14px 20px', borderRadius: '12px', boxShadow: 'var(--panel-shadow)', border: 'var(--glass-border)', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <span style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.6px', whiteSpace: 'nowrap' }}>Realizado por</span>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+              {colaboradoresRelatorio.map((col, i) => (
+                <MentionTag key={i} nome={col.colNome} colCodigo={col.colCodigo} />
+              ))}
+            </div>
+          </section>
+        )}
+
         <section style={{ background: 'var(--bg-panel)', borderRadius: '16px', border: 'var(--glass-border)', marginBottom: '20px', overflow: 'hidden', boxShadow: 'var(--panel-shadow)' }}>
           <div style={{ padding: '15px 20px', borderBottom: 'var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 style={{ margin: 0, color: 'var(--text-bright)' }}>Atividades do Relatório (Duplo clique para abrir)</h3>
@@ -262,7 +286,10 @@ const DetalhesAuditoria = () => {
                         <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={atv.atividade}>{atv.atividade}</div>
                         <div>{atv.dataInicial}</div>
                         <div>{atv.dataFinal}</div>
-                        <div style={{ overflow: 'hidden' }} title={atv.realizadoPor}><MentionTag nome={atv.realizadoPor} colCodigo={atv.colCodigo} /></div>
+                        <div style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                          <MentionTag nome={atv.realizadoPor} colCodigo={atv.colCodigo} />
+                          {atv.realizadoPor2 && <MentionTag nome={atv.realizadoPor2} colCodigo={atv.colCodigo2} />}
+                        </div>
                         <div><span style={{ color: atv.situacao === 'F' || atv.situacao === 'C' ? '#28a745' : '#ffc107', fontWeight: 'bold' }}>{atv.situacao === 'F' || atv.situacao === 'C' ? 'FINALIZADO' : (atv.situacao === 'A' ? 'AGUARDANDO' : atv.situacao)}</span></div>
                         <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={classTexto}>{classTexto}</div>
                         <div>{atv.pendencia ? 'Sim' : 'Não'}</div>
@@ -321,7 +348,10 @@ const DetalhesAuditoria = () => {
                         <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.6px', marginBottom: '4px' }}>{label}</div>
                         <div style={{ fontSize: '13px', lineHeight: '1.3' }}>
                           {label === 'Realizado por'
-                            ? <MentionTag nome={atividadeSelecionada.realizadoPor} colCodigo={atividadeSelecionada.colCodigo} />
+                            ? <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <MentionTag nome={atividadeSelecionada.realizadoPor} colCodigo={atividadeSelecionada.colCodigo} />
+                                {atividadeSelecionada.realizadoPor2 && <MentionTag nome={atividadeSelecionada.realizadoPor2} colCodigo={atividadeSelecionada.colCodigo2} />}
+                              </div>
                             : <span style={{ color: cor, fontWeight: peso }}>{valor}</span>
                           }
                         </div>

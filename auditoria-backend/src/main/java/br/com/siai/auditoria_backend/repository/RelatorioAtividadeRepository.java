@@ -13,7 +13,7 @@ import java.util.List;
 public interface RelatorioAtividadeRepository extends JpaRepository<RelatorioAtividade, Integer> {
 
     @Query(value = """
-        SELECT 
+        SELECT
             RA.[reaId] AS reaId,
             RA.[reaItem] AS item,
             RA.[atvDescricaoPTA] AS atividade,
@@ -21,7 +21,9 @@ public interface RelatorioAtividadeRepository extends JpaRepository<RelatorioAti
             RA.[reaDataFinal] AS dataFinal,
             C.[colNome] AS realizadoPor,
             C.[colCodigo] AS colCodigo,
-            RA.[reaFlag] AS situacao, 
+            C2.[colNome] AS realizadoPor2,
+            C2.[colCodigo] AS colCodigo2,
+            RA.[reaFlag] AS situacao,
             RA.[reaClassificacao] AS classificacao,
             RA.[reaPendencia] AS pendencia,
             RA.[reaTeste] AS teste,
@@ -33,6 +35,8 @@ public interface RelatorioAtividadeRepository extends JpaRepository<RelatorioAti
             RA.[reaRecomendacao] AS recomendacao
         FROM [Auditoria].[Auditoria].[RelatorioAtividade] RA
         LEFT JOIN [Auditoria].[Auditoria].[Colaborador] C ON C.[colId] = RA.[colId]
+        LEFT JOIN [Auditoria].[Auditoria].[Colaborador] C2 ON C2.[colId] = RA.[reaUsuarioAlteracaoId]
+            AND RA.[reaUsuarioAlteracaoId] <> RA.[colId]
         INNER JOIN [Auditoria].[Auditoria].[Relatorio] R ON R.[relId] = RA.[relId]
         WHERE R.[croId] = :croId
         ORDER BY RA.[reaItem] ASC

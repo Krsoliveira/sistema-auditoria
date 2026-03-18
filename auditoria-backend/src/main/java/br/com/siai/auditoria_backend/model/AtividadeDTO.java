@@ -19,5 +19,7 @@ public interface AtividadeDTO {
     String getNaoConformidade();
     String getReincidente();
     String getRecomendacao();
-    String getColCodigo(); // Matrícula do colaborador (chave para foto)
+    String getColCodigo();   // Matrícula do colaborador principal (chave para foto)
+    String getRealizadoPor2();  // Segundo colaborador (quem executou/fechou), se diferente
+    String getColCodigo2();     // Matrícula do segundo colaborador
 }
