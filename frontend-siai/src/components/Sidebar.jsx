@@ -4,31 +4,28 @@ import { useNavigate } from 'react-router-dom';
 const Sidebar = () => {
   const navigate = useNavigate();
   
-  // 🔴 1. Estado para controlar qual é o tema atual
-  const [isLightMode, setIsLightMode] = useState(false);
+  const TEMAS = ['dark', 'light', 'sap'];
 
-  // 🔴 2. Ao abrir o sistema, ele lê a memória para saber qual tema o usuário prefere
+  const TEMA_CONFIG = {
+    dark:  { label: '☀️ Modo Claro',    proximo: 'light' },
+    light: { label: '🔷 SAP Fiori',     proximo: 'sap'   },
+    sap:   { label: '🌙 Modo Escuro',   proximo: 'dark'  },
+  };
+
+  const [tema, setTema] = useState('dark');
+
   useEffect(() => {
     const temaSalvo = localStorage.getItem('siai_tema');
-    if (temaSalvo === 'light') {
-      setIsLightMode(true);
-      document.documentElement.setAttribute('data-theme', 'light');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    const temaValido = TEMAS.includes(temaSalvo) ? temaSalvo : 'dark';
+    setTema(temaValido);
+    document.documentElement.setAttribute('data-theme', temaValido);
   }, []);
 
-  // 🔴 3. A função que vira a chave (Interruptor)
-  const toggleTema = () => {
-    if (isLightMode) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('siai_tema', 'dark');
-      setIsLightMode(false);
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      localStorage.setItem('siai_tema', 'light');
-      setIsLightMode(true);
-    }
+  const alternarTema = () => {
+    const proximo = TEMA_CONFIG[tema].proximo;
+    setTema(proximo);
+    document.documentElement.setAttribute('data-theme', proximo);
+    localStorage.setItem('siai_tema', proximo);
   };
 
   return (
@@ -64,14 +61,14 @@ const Sidebar = () => {
 
       <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         
-        {/* 🔴 O BOTÃO MÁGICO DO TEMA */}
-        <button 
-          onClick={toggleTema} 
+        <button
+          onClick={alternarTema}
           style={{ width: '100%', background: 'transparent', border: '1px solid var(--neon-primary)', color: 'var(--neon-primary)', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'all 0.3s' }}
           onMouseOver={(e) => e.currentTarget.style.background = 'rgba(128, 128, 128, 0.1)'}
           onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+          title={`Tema atual: ${tema.toUpperCase()} — clique para alternar`}
         >
-          {isLightMode ? '🌙 Modo Escuro' : '☀️ Modo Claro'}
+          {TEMA_CONFIG[tema].label}
         </button>
 
         <button 

@@ -2,6 +2,7 @@ package br.com.siai.auditoria_backend.controller;
 
 import br.com.siai.auditoria_backend.model.Colaborador;
 import br.com.siai.auditoria_backend.repository.ColaboradorRepository;
+import br.com.siai.auditoria_backend.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class AuthController {
 
     @Autowired
     private ColaboradorRepository repository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> dados) {
@@ -61,9 +65,8 @@ public class AuthController {
                 if (senhaValida) {
                     System.out.println(">>> Login SUCESSO: " + colaborador.getColNome());
 
-                    // Oculta a senha antes de mandar os dados do usuário para o React (Boa prática!)
-                    colaborador.setColSenha(null);
-                    return ResponseEntity.ok(colaborador);
+                    String token = jwtUtil.gerarToken(matricula.trim(), colaborador.getColNome());
+                    return ResponseEntity.ok(Map.of("token", token, "nome", colaborador.getColNome()));
                 }
 
             } catch (Exception e) {

@@ -1,9 +1,12 @@
 package br.com.siai.auditoria_backend.controller;
 
 import br.com.siai.auditoria_backend.model.DashboardDTO;
-import br.com.siai.auditoria_backend.model.CabecalhoDTO; // 🔴 IMPORTAÇÃO NOVA
+import br.com.siai.auditoria_backend.model.CabecalhoDTO;
 import br.com.siai.auditoria_backend.repository.RelatorioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,23 +20,42 @@ public class RelatorioController {
     @Autowired
     private RelatorioRepository repository;
 
+    // Rota principal agora recebe ano, busca (opcional), page e size
     @GetMapping
-    public ResponseEntity<?> listar(@RequestParam(required = false, defaultValue = "2026") Integer ano) {
-        try {
-            List<DashboardDTO> lista;
+    public ResponseEntity<?> listar(
+            @RequestParam(required = false) Integer ano,
+            @RequestParam(required = false) String busca,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
 
-            if (ano == 0) {
-                System.out.println(">>> [DEBUG] Buscando TODO o histórico de auditorias (Ano = 0)...");
-                lista = repository.buscarTodos();
-            } else {
-                System.out.println(">>> [DEBUG] Buscando dados para o ano: " + ano);
-                lista = repository.buscarPorAno(ano);
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<DashboardDTO> paginaDeRelatorios;
+
+            // Se tem termo de busca...
+            if (busca != null && !busca.trim().isEmpty()) {
+                if (ano != null && ano != 0) {
+                    System.out.println(">>> [DEBUG] Buscando '" + busca + "' no ano " + ano);
+                    paginaDeRelatorios = repository.buscarPorAnoETermo(ano, busca, pageable);
+                } else {
+                    System.out.println(">>> [DEBUG] Buscando globalmente no banco pelo termo: " + busca);
+                    paginaDeRelatorios = repository.buscarPorTermo(busca, pageable);
+                }
+            }
+            // Se NÃO tem termo de busca, mas tem um Ano específico...
+            else if (ano != null && ano != 0) {
+                System.out.println(">>> [DEBUG] Buscando dados paginados para o ano: " + ano);
+                paginaDeRelatorios = repository.buscarPorAno(ano, pageable);
+            }
+            // Se é o Ano 0 e não tem busca (Todos os Anos Geral)...
+            else {
+                paginaDeRelatorios = repository.buscarTodos(pageable);
             }
 
-            return ResponseEntity.ok(lista);
+            return ResponseEntity.ok(paginaDeRelatorios);
 
         } catch (Exception e) {
-            System.err.println(">>> [ERRO] Falha ao cruzar tabelas: " + e.getMessage());
+            System.err.println(">>> [ERRO] Falha ao listar relatórios: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(500).body("Erro interno ao procurar os relatórios.");
         }
@@ -50,7 +72,6 @@ public class RelatorioController {
         }
     }
 
-    // 🔴 A ROTA NOVA PARA O CABEÇALHO DO MODAL (O que faltava!)
     @GetMapping("/cabecalho/{id}")
     public ResponseEntity<CabecalhoDTO> buscarCabecalho(@PathVariable Integer id) {
         try {

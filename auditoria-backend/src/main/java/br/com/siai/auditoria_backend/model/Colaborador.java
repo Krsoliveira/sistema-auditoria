@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Table(schema = "Auditoria", name = "Colaborador")
 public class Colaborador {
 
-
     @Id
     @Column(name = "colId")
     private Integer colId;
@@ -23,11 +22,9 @@ public class Colaborador {
     @Column(name = "colAcessoAoSistema")
     private Integer colAcessoAoSistema; // 0 = Bloqueado, 1 = Liberado
 
-    // Construtor vazio obrigatório para o Spring/Hibernate
     public Colaborador() {}
 
     // --- GETTERS E SETTERS ---
-
     public Integer getColId() { return colId; }
     public void setColId(Integer colId) { this.colId = colId; }
 

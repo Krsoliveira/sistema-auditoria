@@ -6,7 +6,7 @@ public interface AtividadeDTO {
     String getAtividade();
     String getDataInicial();
     String getDataFinal();
-    String getRealizadoPor();
+    String getRealizadoPor(); // O Spring vai procurar por 'realizadoPor' no SQL
     String getSituacao();
     String getClassificacao();
     Integer getPendencia();
@@ -19,4 +19,5 @@ public interface AtividadeDTO {
     String getNaoConformidade();
     String getReincidente();
     String getRecomendacao();
+    String getColCodigo(); // Matrícula do colaborador (chave para foto)
 }

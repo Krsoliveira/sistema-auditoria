@@ -1,115 +1,201 @@
 /* =========================================
-   VARIÁVEIS DO TEMA NEO-TACTILE (DARK)
+   VARIÁVEIS DO TEMA — DARK REFINED
    ========================================= */
 :root {
-  /* Cores de Fundo */
-  --bg-app: #0a0e17;         /* Fundo principal super escuro */
-  --bg-panel: rgba(30, 39, 54, 0.75); /* Cor do "Vidro" translúcido */
-  --bg-inset: rgba(10, 14, 23, 0.6);  /* Cor para campos "afundados" */
+  /* Fundos */
+  --bg-app:   #080c14;
+  --bg-panel: rgba(15, 22, 38, 0.85);
+  --bg-inset: rgba(6, 10, 18, 0.7);
+  --bg-hover: rgba(0, 210, 230, 0.06);
 
-  /* Cores Neon e Texto */
-  --neon-primary: #00f2ff;   /* O azul elétrico vibrante */
-  --text-bright: #ffffff;    /* Texto principal */
-  --text-muted: #94a3b8;     /* Texto secundário */
+  /* Neon & Texto */
+  --neon-primary:   #00d2e6;
+  --neon-secondary: #7c6aff;
+  --neon-success:   #00e5a0;
+  --text-bright:    #e8edf5;
+  --text-muted:     #6b7a99;
+  --text-dim:       #3d4f6e;
 
-  /* Efeitos de Vidro e Luz */
-  --glass-border: 1px solid rgba(0, 242, 255, 0.2); /* Borda sutil brilhante */
-  --glass-blur: blur(12px);   /* O desfoque do vidro */
-  --neon-glow: 0 0 15px rgba(0, 242, 255, 0.4), inset 0 0 10px rgba(0, 242, 255, 0.1); /* Brilho intenso */
-  --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Sombra profunda para dar 3D */
+  /* Bordas & Efeitos */
+  --glass-border:  1px solid rgba(0, 210, 230, 0.12);
+  --glass-blur:    blur(16px);
+  --panel-shadow:  0 4px 24px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255,255,255,0.04) inset;
+  --neon-glow:     0 0 20px rgba(0, 210, 230, 0.25), 0 0 40px rgba(0, 210, 230, 0.1);
+  --card-radius:   14px;
 }
 
 /* =========================================
-   ESTRUTURA GERAL
+   BASE
    ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body, html {
   background-color: var(--bg-app);
   color: var(--text-bright);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  /* 🔴 CORREÇÃO 1: Transição suave do fundo inteiro da tela */
+  -webkit-font-smoothing: antialiased;
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
+/* Scrollbar global */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 230, 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 230, 0.45);
+}
+
+/* =========================================
+   LAYOUT
+   ========================================= */
 .dashboard-container {
   display: flex;
   height: 100vh;
-  background: radial-gradient(circle at top right, rgba(0, 242, 255, 0.1), transparent 40%), var(--bg-app); 
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 0%, rgba(0, 210, 230, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 10% 100%, rgba(124, 106, 255, 0.05) 0%, transparent 60%),
+    var(--bg-app);
 }
 
-/* --- SIDEBAR --- */
+.main-content {
+  flex: 1;
+  padding: 36px 40px;
+  overflow-y: auto;
+}
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
 .sidebar {
-  width: 260px;
-  background: var(--bg-panel);
+  width: 240px;
+  min-width: 240px;
+  background: rgba(10, 15, 28, 0.92);
   backdrop-filter: var(--glass-blur);
-  border-right: var(--glass-border);
-  padding: 30px 20px;
+  border-right: 1px solid rgba(0, 210, 230, 0.08);
+  padding: 28px 16px;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box; 
+  gap: 0;
 }
 
 .sidebar-header {
-  padding-bottom: 25px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-  margin-bottom: 25px;
+  padding: 0 8px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 20px;
 }
 
 .sidebar-header h2 {
   color: var(--neon-primary);
-  text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); 
-  margin: 0 0 5px 0;
-  font-size: 32px;
-  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(0, 210, 230, 0.5);
+  margin: 0 0 4px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 2px;
 }
 
 .sidebar-header span {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   font-weight: 600;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px; 
-  flex-grow: 1; 
+  gap: 4px;
+  flex-grow: 1;
 }
 
-/* --- CONTEÚDO PRINCIPAL --- */
-.main-content {
-  flex: 1;
-  padding: 40px;
-  overflow-y: auto;
+/* Nav items — aplicado via style inline no componente */
+/* Estilo base para botões da sidebar */
+.sidebar-nav button,
+.sidebar button {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+/* =========================================
+   TOPBAR / HEADER
+   ========================================= */
+.top-bar {
+  margin-bottom: 28px;
 }
 
 .top-bar h1 {
   color: var(--text-bright);
-  margin-top: 0;
-}
-.top-bar p {
-  color: var(--text-muted);
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
 }
 
-/* --- CARDS DE ESTATÍSTICAS --- */
+.top-bar p {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* =========================================
+   KPI CARDS
+   ========================================= */
 .stat-card {
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,210,230,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--neon-glow) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 210, 230, 0.15) !important;
 }
 
-/* --- TABELA (VISUAL CLEAN DARK) --- */
+/* =========================================
+   FILTROS
+   ========================================= */
+.filters-section {
+  border-radius: var(--card-radius) !important;
+}
+
+/* =========================================
+   TABELA
+   ========================================= */
 .recent-audits {
-  margin-top: 30px;
+  margin-top: 28px;
 }
 
 .section-header h3 {
+  color: var(--text-bright);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.section-header h3 span {
   color: var(--neon-primary);
 }
 
@@ -118,8 +204,7 @@ body, html {
   backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
   box-shadow: var(--panel-shadow);
-  border-radius: 16px;
-  padding: 5px; 
+  border-radius: var(--card-radius);
   overflow: hidden;
   overflow-x: auto;
 }
@@ -131,171 +216,359 @@ table {
 }
 
 table thead th {
-  background: rgba(0, 242, 255, 0.05);
-  color: var(--neon-primary);
-  padding: 18px;
-  font-size: 13px;
+  background: rgba(0, 210, 230, 0.04);
+  color: var(--text-muted);
+  padding: 14px 18px;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: var(--glass-border);
+  letter-spacing: 1.2px;
+  border-bottom: 1px solid rgba(0, 210, 230, 0.1);
   text-align: left;
+  white-space: nowrap;
 }
 
 table tbody tr {
-  transition: background 0.2s;
+  transition: background 0.15s ease;
 }
 
-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03); 
+table tbody tr:hover td {
+  background: var(--bg-hover);
+}
+
+table tbody tr:hover .btn-detalhes {
+  border-color: var(--neon-primary);
+  background: rgba(0, 210, 230, 0.1);
 }
 
 table td {
-  padding: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13.5px;
   vertical-align: middle;
 }
 
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .relatorio-id {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
   color: var(--neon-primary);
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
 }
 
 .desc-cell strong {
   color: var(--text-bright);
   font-weight: 500;
+  font-size: 13.5px;
 }
 
-/* --- BOTÕES GLOW DA TABELA --- */
+/* =========================================
+   BOTÃO VER DETALHES
+   ========================================= */
 .btn-detalhes {
-  background: rgba(0, 242, 255, 0.1);
-  color: var(--neon-primary);
-  border: 1px solid var(--neon-primary);
-  padding: 8px 16px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 5px rgba(0, 242, 255, 0.2);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-detalhes:hover {
   background: var(--neon-primary);
-  color: var(--bg-app);
-  box-shadow: var(--neon-glow);
+  color: #080c14;
+  border-color: var(--neon-primary);
+  box-shadow: 0 0 16px rgba(0, 210, 230, 0.35);
+  transform: translateY(-1px);
 }
-
-/* 🔴 CORREÇÃO 2: Placeholders dinâmicos */
-::placeholder {
-  color: rgba(255, 255, 255, 0.3) !important;
-}
-[data-theme="light"] ::placeholder {
-  color: rgba(0, 0, 0, 0.4) !important;
-}
-
 
 /* =========================================
-   🌓 TEMA CLARO (FLAT / CORPORATIVO SAP FIORI)
+   INPUTS & SELECTS
    ========================================= */
+input, select, textarea {
+  font-family: 'Inter', sans-serif;
+}
 
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--neon-primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 210, 230, 0.12) !important;
+}
+
+::placeholder {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* =========================================
+   PAGINAÇÃO
+   ========================================= */
+.pagination-btn {
+  transition: all 0.2s ease;
+}
+
+/* =========================================
+   🌓 TEMA CLARO (CORPORATIVO)
+   ========================================= */
 [data-theme="light"] {
-  --bg-panel: #ffffff;
-  --bg-inset: #ffffff;
-  
-  --text-bright: #32363a;
-  --text-muted: #6a6d70;
-  
-  --neon-primary: #00875f; /* Verde COMIGO Oficial */
-  --neon-secondary: #0a6ed1; /* Azul SAP Oficial */
-  
-  --glass-border: 1px solid #e5e5e5;
-  --panel-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra elegante e difusa */
-  --glass-blur: none;
+  --bg-panel:       #ffffff;
+  --bg-inset:       #f8f9fc;
+  --bg-hover:       rgba(0, 135, 95, 0.04);
+  --text-bright:    #1a2035;
+  --text-muted:     #64748b;
+  --text-dim:       #94a3b8;
+  --neon-primary:   #00875f;
+  --neon-secondary: #0a6ed1;
+  --glass-border:   1px solid #e2e8f0;
+  --panel-shadow:   0 2px 12px rgba(0, 0, 0, 0.06);
+  --glass-blur:     none;
 }
 
 [data-theme="light"] body {
-  background-color: #f7f7f7;
+  background-color: #f1f5f9;
   background-image: none;
 }
 
-/* Todos os painéis com transição suave */
-.dashboard-container *, .main-content *, aside * {
-  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.3s ease;
+[data-theme="light"] .dashboard-container {
+  background: #f1f5f9;
 }
 
-/* Tabela com aparência corporativa estrita */
-[data-theme="light"] table {
-  border: 1px solid #e5e5e5;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+[data-theme="light"] .sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .sidebar-header h2 {
+  text-shadow: none;
+  color: var(--neon-primary);
 }
 
 [data-theme="light"] table thead th {
-  background: #f5f5f5 !important;
-  color: #32363a !important;
-  border-bottom: 2px solid #d1d6db !important;
-  font-weight: 700 !important;
+  background: #f8fafc !important;
+  color: #475569 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 
 [data-theme="light"] table td {
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
 }
 
 [data-theme="light"] table tbody tr:nth-child(even) td {
-  background-color: #fafafa;
+  background-color: #fafcff;
 }
 
 [data-theme="light"] table tbody tr:hover td {
-  background-color: #f0f7f4 !important; 
+  background-color: rgba(0, 135, 95, 0.04) !important;
 }
 
-/* Ajuste fino nos Inputs e Selects */
-[data-theme="light"] input, 
+[data-theme="light"] input,
 [data-theme="light"] select {
   background-color: #ffffff !important;
-  border: 1px solid #89919a !important;
-  color: #32363a !important;
-  box-shadow: none !important; 
+  border: 1px solid #cbd5e1 !important;
+  color: #1a2035 !important;
 }
 
-[data-theme="light"] input:focus, 
+[data-theme="light"] input:focus,
 [data-theme="light"] select:focus {
-  border-color: #00875f !important;
-  box-shadow: 0 0 0 2px rgba(0, 135, 95, 0.2) !important;
+  border-color: var(--neon-primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 135, 95, 0.12) !important;
 }
 
-/* 🔴 CORREÇÃO 3: Botão da tabela no tema claro */
 [data-theme="light"] .btn-detalhes {
-  background: rgba(0, 135, 95, 0.1);
   color: var(--neon-primary);
-  border-color: var(--neon-primary);
+  border-color: rgba(0, 135, 95, 0.3);
+  background: transparent;
   box-shadow: none;
 }
 
 [data-theme="light"] .btn-detalhes:hover {
   background: var(--neon-primary);
   color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 135, 95, 0.3);
+  border-color: var(--neon-primary);
+  box-shadow: 0 4px 12px rgba(0, 135, 95, 0.25);
+  transform: translateY(-1px);
 }
 
-/* 🔴 CORREÇÃO 4: Textos Laterais (Removido o !important forçado que quebrava o botão vermelho Sair) */
+[data-theme="light"] .relatorio-id {
+  color: var(--neon-primary);
+}
+
+[data-theme="light"] .section-header h3 {
+  color: #1a2035;
+}
+
 [data-theme="light"] aside h2 {
   text-shadow: none;
 }
 
-/* Barras de Rolagem Customizadas pro Tema Claro */
-[data-theme="light"] ::-webkit-scrollbar-track {
-  background: #f5f5f5;
-  border-radius: 6px;
+[data-theme="light"] .stat-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* Scrollbar tema claro */
 [data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: #00875f; 
-  border-radius: 6px;
-  border: 2px solid #f5f5f5;
+  background: rgba(0, 135, 95, 0.25);
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
-  background: #006b4a;
+  background: rgba(0, 135, 95, 0.5);
+}
+
+[data-theme="light"] ::placeholder {
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* =========================================
+   🔷 TEMA SAP FIORI FOR HANA
+   ========================================= */
+[data-theme="sap"] {
+  --bg-app:         #f5f6f7;
+  --bg-panel:       #ffffff;
+  --bg-inset:       #f0f2f4;
+  --bg-hover:       rgba(10, 110, 209, 0.06);
+
+  --neon-primary:   #0a6ed1;
+  --neon-secondary: #e8a000;
+  --neon-success:   #107e3e;
+  --text-bright:    #32363a;
+  --text-muted:     #6a6d70;
+  --text-dim:       #a8aaac;
+
+  --glass-border:   1px solid #d1d7dd;
+  --glass-blur:     none;
+  --panel-shadow:   0 2px 8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0,0,0,0.1);
+  --neon-glow:      none;
+  --card-radius:    8px;
+}
+
+[data-theme="sap"] body,
+[data-theme="sap"] html {
+  background-color: #f5f6f7;
+  color: #32363a;
+}
+
+[data-theme="sap"] .dashboard-container {
+  background: #f5f6f7;
+}
+
+/* Sidebar SAP — azul-aço escuro característico */
+[data-theme="sap"] aside {
+  background: #354a5e !important;
+  border-right: 1px solid #2c3f52 !important;
+}
+
+[data-theme="sap"] aside h2 {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+[data-theme="sap"] aside span {
+  color: rgba(255,255,255,0.55) !important;
+}
+
+[data-theme="sap"] aside button {
+  color: rgba(255,255,255,0.85) !important;
+}
+
+[data-theme="sap"] aside button:hover {
+  background: rgba(255,255,255,0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Tabela SAP */
+[data-theme="sap"] table thead th {
+  background: #f5f6f7 !important;
+  color: #6a6d70 !important;
+  border-bottom: 2px solid #d1d7dd !important;
+  font-size: 12px !important;
+}
+
+[data-theme="sap"] table td {
+  color: #32363a;
+  border-bottom: 1px solid #f0f2f4;
+}
+
+[data-theme="sap"] table tbody tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+[data-theme="sap"] table tbody tr:hover td {
+  background-color: rgba(10, 110, 209, 0.04) !important;
+}
+
+/* Inputs SAP */
+[data-theme="sap"] input,
+[data-theme="sap"] select {
+  background-color: #ffffff !important;
+  border: 1px solid #bcc3ca !important;
+  color: #32363a !important;
+}
+
+[data-theme="sap"] input:focus,
+[data-theme="sap"] select:focus {
+  border-color: #0a6ed1 !important;
+  box-shadow: 0 0 0 2px rgba(10, 110, 209, 0.15) !important;
+}
+
+[data-theme="sap"] ::placeholder {
+  color: rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Botões SAP */
+[data-theme="sap"] .btn-detalhes {
+  color: #0a6ed1;
+  border-color: #bcc3ca;
+  background: transparent;
+}
+
+[data-theme="sap"] .btn-detalhes:hover {
+  background: #0a6ed1;
+  color: #ffffff;
+  border-color: #0a6ed1;
+  box-shadow: 0 2px 8px rgba(10, 110, 209, 0.3);
+  transform: none;
+}
+
+[data-theme="sap"] .relatorio-id {
+  color: #0a6ed1;
+}
+
+[data-theme="sap"] .section-header h3 {
+  color: #32363a;
+}
+
+[data-theme="sap"] .stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Scrollbar SAP */
+[data-theme="sap"] ::-webkit-scrollbar-thumb {
+  background: rgba(10, 110, 209, 0.2);
+}
+
+[data-theme="sap"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 110, 209, 0.45);
+}
+
+/* =========================================
+   TRANSIÇÕES GLOBAIS
+   ========================================= */
+.dashboard-container *,
+.main-content *,
+aside * {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.25s ease;
 }

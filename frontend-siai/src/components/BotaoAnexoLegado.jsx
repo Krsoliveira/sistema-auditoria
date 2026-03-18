@@ -9,11 +9,13 @@ const BotaoAnexoLegado = ({ relatorioId }) => {
     if (!relatorioId) return;
 
     const verificarAnexo = async () => {
+      const token = localStorage.getItem('siai_token');
       try {
         const response = await fetch(`http://localhost:8080/api/relatorios/${relatorioId}/anexo-legado-info`, {
           method: 'GET',
           headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
           }
         });
         

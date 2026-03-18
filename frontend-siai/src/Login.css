@@ -1,5 +1,4 @@
-/* src/Login.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .login-container {
   height: 100vh;
@@ -7,93 +6,75 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Fundo gradiente elegante usando as cores escuras da paleta */
-  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-black) 100%);
   font-family: 'Inter', sans-serif;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(0, 210, 230, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 100%, rgba(124, 106, 255, 0.06) 0%, transparent 60%),
+    #080c14;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grade sutil no fundo */
+.login-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 210, 230, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 210, 230, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
 }
 
 .login-card {
-  background: var(--color-bg-main); /* Branco puro */
+  background: rgba(13, 20, 36, 0.9);
+  backdrop-filter: blur(20px);
   padding: 48px;
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Sombra mais dramática */
+  border-radius: 20px;
+  border: 1px solid rgba(0, 210, 230, 0.15);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255,255,255,0.04) inset;
   width: 100%;
-  max-width: 420px;
-  text-align: center;
-  border-top: 4px solid var(--color-accent-gold); /* Detalhe dourado no topo */
+  max-width: 400px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Linha neon no topo do card */
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 210, 230, 0.6), transparent);
+  border-radius: 0 0 4px 4px;
 }
 
 .login-title {
-  color: var(--color-primary-dark); /* Azul escuro */
-  font-size: 32px;
-  margin-bottom: 8px;
+  color: #00d2e6;
+  font-size: 36px;
   font-weight: 800;
+  letter-spacing: 3px;
+  margin: 0 0 6px;
+  text-shadow: 0 0 24px rgba(0, 210, 230, 0.4);
 }
 
 .login-subtitle {
-  color: var(--color-text-secondary);
-  font-size: 16px;
-  margin-bottom: 40px;
-  font-weight: 500;
-}
-
-.input-group {
-  text-align: left;
-  margin-bottom: 24px;
-}
-
-.input-group label {
-  display: block;
+  color: #6b7a99;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--color-primary-dark);
-  margin-bottom: 8px;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin: 0 0 36px;
 }
 
-.input-group input {
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid var(--color-border-subtle); /* Cinza claro */
-  border-radius: 8px;
-  font-size: 16px;
-  background: var(--color-bg-light); /* Fundo do input cinza claro */
-  transition: all 0.3s ease;
-  color: var(--color-text-primary);
-  box-sizing: border-box;
-}
-
-.input-group input:focus {
-  border-color: var(--color-accent-gold); /* Foco Dourado */
-  background: var(--color-bg-main);
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(252, 163, 17, 0.2); /* Glow dourado suave */
-}
-
-.btn-login {
-  width: 100%;
-  padding: 16px;
-  /* Botão principal Dourado */
-  background: var(--color-accent-gold);
-  color: var(--color-primary-dark); /* Texto azul escuro no botão dourado para contraste */
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(252, 163, 17, 0.3);
-}
-
-.btn-login:hover {
-  transform: translateY(-2px);
-  background: #e59100; /* Um tom ligeiramente mais escuro do dourado para hover */
-  box-shadow: 0 10px 20px rgba(252, 163, 17, 0.4);
+.loading-spinner {
+  color: #00d2e6;
+  font-size: 14px;
 }
 
 .login-footer {
-  margin-top: 32px;
-  color: var(--color-text-secondary);
-  font-size: 13px;
+  margin-top: 28px;
+  color: #3d4f6e;
+  font-size: 12px;
 }

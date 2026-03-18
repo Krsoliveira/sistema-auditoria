@@ -1,19 +1,22 @@
 package br.com.siai.auditoria_backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "Auditoria", name = "RelatorioAtividade")
 public class RelatorioAtividade {
 
-    // 👇 A mágica do JPA está aqui: Avisamos que este é o ID da tabela
     @Id
+    @Column(name = "reaId")
     private int reaId;
 
-    // Campos principais do banco legado
-    private int relId, atvId, reaItem, reaDias, colId, carClassificacao, reaFlagNum, atgObrigatorio;
+    // 👇 AQUI ESTÁ A MUDANÇA: Substituímos o 'private int colId;' por isto:
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "colId")
+    private Colaborador colaborador;
+
+    // Campos principais do banco legado (sem o colId aqui!)
+    private int relId, atvId, reaItem, reaDias, carClassificacao, reaFlagNum, atgObrigatorio;
     private int reaUsuarioInclusaoId, reaUsuarioAlteracaoId, reaPendencia, penId, reaQuebra, reaQuebraPendencia;
 
     private String atvDescricaoPTA, reaDataInicial, reaDataFinal, reaHoraInicial, reaHoraFinal, reaHoras;
@@ -30,6 +33,10 @@ public class RelatorioAtividade {
     // --- GETTERS E SETTERS ---
     public int getReaId() { return reaId; }
     public void setReaId(int reaId) { this.reaId = reaId; }
+
+    // 👇 GETTER E SETTER DO COLABORADOR
+    public Colaborador getColaborador() { return colaborador; }
+    public void setColaborador(Colaborador colaborador) { this.colaborador = colaborador; }
 
     public int getRelId() { return relId; }
     public void setRelId(int relId) { this.relId = relId; }
@@ -78,82 +85,118 @@ public class RelatorioAtividade {
 
     public int getReaItem() { return reaItem; }
     public void setReaItem(int reaItem) { this.reaItem = reaItem; }
+
     public String getReaHoraInicial() { return reaHoraInicial; }
     public void setReaHoraInicial(String reaHoraInicial) { this.reaHoraInicial = reaHoraInicial; }
+
     public String getReaHoraFinal() { return reaHoraFinal; }
     public void setReaHoraFinal(String reaHoraFinal) { this.reaHoraFinal = reaHoraFinal; }
+
     public int getReaDias() { return reaDias; }
     public void setReaDias(int reaDias) { this.reaDias = reaDias; }
+
     public String getReaHoras() { return reaHoras; }
     public void setReaHoras(String reaHoras) { this.reaHoras = reaHoras; }
-    public int getColId() { return colId; }
-    public void setColId(int colId) { this.colId = colId; }
+
     public String getCarNome() { return carNome; }
     public void setCarNome(String carNome) { this.carNome = carNome; }
+
     public int getCarClassificacao() { return carClassificacao; }
     public void setCarClassificacao(int carClassificacao) { this.carClassificacao = carClassificacao; }
+
     public String getReaFlag() { return reaFlag; }
     public void setReaFlag(String reaFlag) { this.reaFlag = reaFlag; }
+
     public int getReaFlagNum() { return reaFlagNum; }
     public void setReaFlagNum(int reaFlagNum) { this.reaFlagNum = reaFlagNum; }
+
     public int getAtgObrigatorio() { return atgObrigatorio; }
     public void setAtgObrigatorio(int atgObrigatorio) { this.atgObrigatorio = atgObrigatorio; }
+
     public String getReaClassificacao() { return reaClassificacao; }
     public void setReaClassificacao(String reaClassificacao) { this.reaClassificacao = reaClassificacao; }
+
     public String getReaUltimasAuditorias() { return reaUltimasAuditorias; }
     public void setReaUltimasAuditorias(String reaUltimasAuditorias) { this.reaUltimasAuditorias = reaUltimasAuditorias; }
+
     public String getReaObs() { return reaObs; }
     public void setReaObs(String reaObs) { this.reaObs = reaObs; }
+
     public String getReaDataInclusao() { return reaDataInclusao; }
     public void setReaDataInclusao(String reaDataInclusao) { this.reaDataInclusao = reaDataInclusao; }
+
     public String getReaDataAlteracao() { return reaDataAlteracao; }
     public void setReaDataAlteracao(String reaDataAlteracao) { this.reaDataAlteracao = reaDataAlteracao; }
+
     public String getReaHoraInclusao() { return reaHoraInclusao; }
     public void setReaHoraInclusao(String reaHoraInclusao) { this.reaHoraInclusao = reaHoraInclusao; }
+
     public String getReaHoraAlteracao() { return reaHoraAlteracao; }
     public void setReaHoraAlteracao(String reaHoraAlteracao) { this.reaHoraAlteracao = reaHoraAlteracao; }
+
     public String getReaUsuarioInclusao() { return reaUsuarioInclusao; }
     public void setReaUsuarioInclusao(String reaUsuarioInclusao) { this.reaUsuarioInclusao = reaUsuarioInclusao; }
+
     public int getReaUsuarioInclusaoId() { return reaUsuarioInclusaoId; }
     public void setReaUsuarioInclusaoId(int reaUsuarioInclusaoId) { this.reaUsuarioInclusaoId = reaUsuarioInclusaoId; }
+
     public int getReaUsuarioAlteracaoId() { return reaUsuarioAlteracaoId; }
     public void setReaUsuarioAlteracaoId(int reaUsuarioAlteracaoId) { this.reaUsuarioAlteracaoId = reaUsuarioAlteracaoId; }
+
     public String getReaPeriodoAbrangido() { return reaPeriodoAbrangido; }
     public void setReaPeriodoAbrangido(String reaPeriodoAbrangido) { this.reaPeriodoAbrangido = reaPeriodoAbrangido; }
+
     public int getReaPendencia() { return reaPendencia; }
     public void setReaPendencia(int reaPendencia) { this.reaPendencia = reaPendencia; }
+
     public int getPenId() { return penId; }
     public void setPenId(int penId) { this.penId = penId; }
+
     public int getReaQuebra() { return reaQuebra; }
     public void setReaQuebra(int reaQuebra) { this.reaQuebra = reaQuebra; }
+
     public int getReaQuebraPendencia() { return reaQuebraPendencia; }
     public void setReaQuebraPendencia(int reaQuebraPendencia) { this.reaQuebraPendencia = reaQuebraPendencia; }
+
     public String getAtvDescricao() { return atvDescricao; }
     public void setAtvDescricao(String atvDescricao) { this.atvDescricao = atvDescricao; }
+
     public String getAtvPassoPasso() { return atvPassoPasso; }
     public void setAtvPassoPasso(String atvPassoPasso) { this.atvPassoPasso = atvPassoPasso; }
+
     public String getAtvNota() { return atvNota; }
     public void setAtvNota(String atvNota) { this.atvNota = atvNota; }
+
     public String getAtvClassificacao() { return atvClassificacao; }
     public void setAtvClassificacao(String atvClassificacao) { this.atvClassificacao = atvClassificacao; }
+
     public String getColNome() { return colNome; }
     public void setColNome(String colNome) { this.colNome = colNome; }
+
     public String getRelNumero() { return relNumero; }
     public void setRelNumero(String relNumero) { this.relNumero = relNumero; }
+
     public String getRelData() { return relData; }
     public void setRelData(String relData) { this.relData = relData; }
+
     public String getRelSugestao() { return relSugestao; }
     public void setRelSugestao(String relSugestao) { this.relSugestao = relSugestao; }
+
     public String getRelCabecalho1() { return relCabecalho1; }
     public void setRelCabecalho1(String relCabecalho1) { this.relCabecalho1 = relCabecalho1; }
+
     public String getRelCabecalho2() { return relCabecalho2; }
     public void setRelCabecalho2(String relCabecalho2) { this.relCabecalho2 = relCabecalho2; }
+
     public String getRelCabecalho3() { return relCabecalho3; }
     public void setRelCabecalho3(String relCabecalho3) { this.relCabecalho3 = relCabecalho3; }
+
     public String getRelGestor() { return relGestor; }
     public void setRelGestor(String relGestor) { this.relGestor = relGestor; }
+
     public String getReaPeriodoInicial() { return reaPeriodoInicial; }
     public void setReaPeriodoInicial(String reaPeriodoInicial) { this.reaPeriodoInicial = reaPeriodoInicial; }
+
     public String getReaPeriodoFinal() { return reaPeriodoFinal; }
     public void setReaPeriodoFinal(String reaPeriodoFinal) { this.reaPeriodoFinal = reaPeriodoFinal; }
 }

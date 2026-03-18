@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar'; // 🔴 IMPORTAÇÃO DO MENU AQUI!
 import '../Dashboard.css';
 
 const BancoHoras = () => {
+  const tokenJWT = localStorage.getItem('siai_token');
   const [resumoGeral, setResumoGeral] = useState([]);
   const [extrato, setExtrato] = useState([]);
   const [colaboradorSelecionado, setColaboradorSelecionado] = useState(null);
@@ -27,7 +28,9 @@ const BancoHoras = () => {
     const buscarResumo = async () => {
       try {
         setLoadingResumo(true);
-        const res = await fetch('http://localhost:8080/api/bancohoras/resumo');
+        const res = await fetch('http://localhost:8080/api/bancohoras/resumo', {
+          headers: { 'Authorization': `Bearer ${tokenJWT}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setResumoGeral(data);
@@ -45,7 +48,9 @@ const BancoHoras = () => {
     setColaboradorSelecionado(colab);
     try {
       setLoadingExtrato(true);
-      const res = await fetch(`http://localhost:8080/api/bancohoras/extrato/${colab.colaboradorId}`);
+      const res = await fetch(`http://localhost:8080/api/bancohoras/extrato/${colab.colaboradorId}`, {
+        headers: { 'Authorization': `Bearer ${tokenJWT}` }
+      });
       if (res.ok) {
         const data = await res.json();
         setExtrato(data);

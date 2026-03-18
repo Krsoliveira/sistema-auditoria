@@ -1,41 +1,33 @@
-/* src/index.css */
-:root {
-  /* --- PALETA "BLACK AND GOLD ELEGANCE" --- */
-  
-  /* Cores Principais */
-  --color-primary-dark: #14213D;  /* Azul Noturno (Para Sidebars, Headers) */
-  --color-accent-gold: #FCA311;   /* Ouro/Laranja (Para Botões de Ação, Destaques) */
-  --color-black: #000000;         /* Preto Puro (Para Textos Fortes, Overlays) */
-  
-  /* Fundos e Neutros */
-  --color-bg-main: #FFFFFF;       /* Branco Puro (Fundo de conteúdo) */
-  --color-bg-light: #E5E5E5;      /* Cinza Claro (Fundo de tela, bordas sutis) */
-  
-  /* Variações Funcionais (Derivadas da paleta) */
-  --color-text-on-dark: #FFFFFF;
-  --color-text-primary: #14213D;  /* Usando o azul escuro para texto padrão para suavizar o preto */
-  --color-text-secondary: #666666; /* Um cinza médio para subtítulos (baseado no E5E5E5 mas mais escuro) */
-  
-  --color-border-subtle: #E5E5E5;
-  --color-border-accent: #FCA311;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  /* Status (Mantendo padrão semântico, mas ajustado) */
-  --color-success: #10b981; /* Verde (mantido para "Concluído") */
-  --color-warning: #FCA311; /* O próprio Dourado serve para "Atenção" */
+:root {
+  --color-primary-dark:    #0d1421;
+  --color-accent-gold:     #00d2e6;
+  --color-black:           #080c14;
+  --color-bg-main:         #0f1726;
+  --color-bg-light:        #080c14;
+  --color-text-on-dark:    #e8edf5;
+  --color-text-primary:    #e8edf5;
+  --color-text-secondary:  #6b7a99;
+  --color-border-subtle:   rgba(0, 210, 230, 0.12);
+  --color-border-accent:   #00d2e6;
+  --color-success:         #00e5a0;
+  --color-warning:         #f59e0b;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-bg-light); /* Fundo geral cinza claro */
-  color: var(--color-text-primary);
+  background-color: #080c14;
+  color: #e8edf5;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', source-code-pro, Menlo, Monaco, Consolas, monospace;
 }
