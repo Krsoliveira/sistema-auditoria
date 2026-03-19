@@ -3,7 +3,10 @@ package br.com.siai.auditoria_backend.controller;
 import br.com.siai.auditoria_backend.model.DashboardDTO;
 import br.com.siai.auditoria_backend.model.CabecalhoDTO;
 import br.com.siai.auditoria_backend.model.ColaboradorSimpleDTO;
+import br.com.siai.auditoria_backend.model.HistoricoRelatorioDTO;
+import br.com.siai.auditoria_backend.model.HistoricoAtividadeDTO;
 import br.com.siai.auditoria_backend.repository.RelatorioRepository;
+import br.com.siai.auditoria_backend.repository.RelatorioAtividadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +23,9 @@ public class RelatorioController {
 
     @Autowired
     private RelatorioRepository repository;
+
+    @Autowired
+    private RelatorioAtividadeRepository atividadeRepository;
 
     // Rota principal agora recebe ano, busca (opcional), page e size
     @GetMapping
@@ -80,6 +86,29 @@ public class RelatorioController {
             return ResponseEntity.ok(anos);
         } catch (Exception e) {
             System.err.println(">>> [ERRO] Falha ao buscar anos: " + e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @GetMapping("/{croId}/historico-unidade")
+    public ResponseEntity<List<HistoricoRelatorioDTO>> buscarHistoricoUnidade(@PathVariable Integer croId) {
+        try {
+            List<HistoricoRelatorioDTO> historico = repository.buscarHistoricoUnidade(croId);
+            return ResponseEntity.ok(historico);
+        } catch (Exception e) {
+            System.err.println(">>> [ERRO] Falha ao buscar histórico da unidade: " + e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @GetMapping("/{croId}/atividade/{atvId}/historico")
+    public ResponseEntity<List<HistoricoAtividadeDTO>> buscarHistoricoAtividade(
+            @PathVariable Integer croId, @PathVariable Integer atvId) {
+        try {
+            List<HistoricoAtividadeDTO> historico = atividadeRepository.buscarHistoricoAtividade(atvId, croId);
+            return ResponseEntity.ok(historico);
+        } catch (Exception e) {
+            System.err.println(">>> [ERRO] Falha ao buscar histórico da atividade: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }

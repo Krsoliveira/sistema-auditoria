@@ -18,7 +18,7 @@ const BotaoAnexoLegado = ({ relatorioId }) => {
             'Authorization': `Bearer ${token}`
           }
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.temArquivo) {
@@ -42,36 +42,63 @@ const BotaoAnexoLegado = ({ relatorioId }) => {
     }
   };
 
-  if (loading || !temAnexo) {
-    return null; 
-  }
+  if (loading || !temAnexo) return null;
 
   return (
-    <button 
-      onClick={handleAbrirPdf}
+    <section
       style={{
+        background: 'var(--bg-panel)',
+        borderRadius: '12px',
+        border: '1px solid rgba(0, 135, 95, 0.35)',
+        boxShadow: '0 0 20px rgba(0, 135, 95, 0.06)',
+        marginBottom: '20px',
+        padding: '16px 22px',
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
-        backgroundColor: 'var(--neon-primary)',
-        color: '#000',
-        padding: '10px 20px',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        boxShadow: '0 4px 15px rgba(0, 135, 95, 0.4)',
-        transition: 'transform 0.2s ease, filter 0.2s ease'
+        gap: '16px',
       }}
-      onMouseOver={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
-      onMouseOut={(e) => e.currentTarget.style.filter = 'brightness(1)'}
-      title="Abrir anexo do relatório"
     >
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-      </svg>
-      Anexo
-    </button>
+      {/* Ícone */}
+      <div style={{
+        width: '44px', height: '44px', borderRadius: '10px',
+        background: 'rgba(0, 135, 95, 0.12)', border: '1px solid rgba(0, 135, 95, 0.3)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+      }}>
+        <svg width="22" height="22" fill="none" stroke="var(--neon-primary)" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+        </svg>
+      </div>
+
+      {/* Texto */}
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.6px' }}>
+          Anexo do Relatório
+        </div>
+        <div style={{ fontSize: '13px', color: 'var(--text-bright)', marginTop: '2px' }}>
+          Documento original disponível para visualização
+        </div>
+      </div>
+
+      {/* Botão */}
+      <button
+        onClick={handleAbrirPdf}
+        style={{
+          display: 'flex', alignItems: 'center', gap: '7px',
+          background: 'rgba(0, 135, 95, 0.12)', border: '1px solid var(--neon-primary)',
+          color: 'var(--neon-primary)', padding: '8px 18px', borderRadius: '8px',
+          cursor: 'pointer', fontWeight: '700', fontSize: '13px',
+          transition: 'background 0.2s', whiteSpace: 'nowrap', flexShrink: 0
+        }}
+        onMouseOver={e => e.currentTarget.style.background = 'rgba(0, 135, 95, 0.22)'}
+        onMouseOut={e => e.currentTarget.style.background = 'rgba(0, 135, 95, 0.12)'}
+        title="Abrir anexo do relatório"
+      >
+        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+        Abrir documento
+      </button>
+    </section>
   );
 };
 

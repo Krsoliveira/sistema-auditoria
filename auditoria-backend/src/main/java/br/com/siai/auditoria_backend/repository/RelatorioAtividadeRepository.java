@@ -1,6 +1,7 @@
 package br.com.siai.auditoria_backend.repository;
 
 import br.com.siai.auditoria_backend.model.AtividadeDTO;
+import br.com.siai.auditoria_backend.model.HistoricoAtividadeDTO;
 import br.com.siai.auditoria_backend.model.RelatorioAtividade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,7 @@ public interface RelatorioAtividadeRepository extends JpaRepository<RelatorioAti
     @Query(value = """
         SELECT
             RA.[reaId] AS reaId,
+            RA.[atvId] AS atvId,
             RA.[reaItem] AS item,
             RA.[atvDescricaoPTA] AS atividade,
             RA.[reaDataInicial] AS dataInicial,
@@ -42,4 +44,28 @@ public interface RelatorioAtividadeRepository extends JpaRepository<RelatorioAti
         ORDER BY RA.[reaItem] ASC
         """, nativeQuery = true)
     List<AtividadeDTO> buscarAtividadesPorCronograma(@Param("croId") Integer croId);
+
+    // HISTÓRICO: últimas 2 ocorrências da mesma atividade na mesma unidade (excluindo relatório atual)
+    @Query(value = """
+        SELECT TOP 2
+            c2.croId AS croId,
+            r2.relNumero AS numero,
+            CONVERT(VARCHAR(10), ra2.reaDataFinal, 103) AS dataFinal,
+            ra2.reaFlag AS situacao,
+            ra2.reaClassificacao AS classificacao,
+            ra2.reaObservacao AS observacao,
+            ra2.reaNaoConformidade AS naoConformidade,
+            ra2.reaRecomendacao AS recomendacao,
+            col.colNome AS realizadoPor,
+            col.colCodigo AS colCodigo
+        FROM [Auditoria].[Auditoria].[RelatorioAtividade] ra2
+        JOIN [Auditoria].[Auditoria].[Relatorio] r2 ON ra2.relId = r2.relId
+        JOIN [Auditoria].[Auditoria].[Cronograma] c2 ON r2.croId = c2.croId
+        LEFT JOIN [Auditoria].[Auditoria].[Colaborador] col ON ra2.colId = col.colId
+        WHERE ra2.atvId = :atvId
+          AND c2.uniId = (SELECT uniId FROM [Auditoria].[Auditoria].[Cronograma] WHERE croId = :croId)
+          AND c2.croId < :croId
+        ORDER BY c2.croId DESC
+    """, nativeQuery = true)
+    List<HistoricoAtividadeDTO> buscarHistoricoAtividade(@Param("atvId") Integer atvId, @Param("croId") Integer croId);
 }

@@ -81,6 +81,10 @@ const DetalhesAuditoria = () => {
     cabecalho1: '', cabecalho2: '', cabecalho3: '', sugestao: ''
   });
   const [colaboradoresRelatorio, setColaboradoresRelatorio] = useState([]);
+  const [historicoUnidade, setHistoricoUnidade] = useState([]);
+  const [historicoUnidadeAberto, setHistoricoUnidadeAberto] = useState(false);
+  const [modalHistoricoAtv, setModalHistoricoAtv] = useState(null); // { atvId, dados: [] }
+  const [loadingHistoricoAtv, setLoadingHistoricoAtv] = useState(false);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -108,6 +112,18 @@ const DetalhesAuditoria = () => {
           }
         } catch (erroAtividades) {
           console.error("Falha ao buscar atividades:", erroAtividades);
+        }
+
+        try {
+          const resHistorico = await fetch(`http://localhost:8080/api/relatorios/${id}/historico-unidade`, {
+            headers: { 'Authorization': `Bearer ${tokenJWT}` }
+          });
+          if (resHistorico.ok) {
+            const dataHist = await resHistorico.json();
+            setHistoricoUnidade(Array.isArray(dataHist) ? dataHist : []);
+          }
+        } catch (erroHist) {
+          console.error("Falha ao buscar histórico da unidade:", erroHist);
         }
 
         try {
@@ -180,6 +196,26 @@ const DetalhesAuditoria = () => {
     }
   };
 
+  const abrirHistoricoAtividade = async (e, atv) => {
+    e.stopPropagation();
+    if (!atv.atvId) return;
+    setLoadingHistoricoAtv(true);
+    setModalHistoricoAtv({ atvId: atv.atvId, nome: atv.atividade, dados: [] });
+    try {
+      const res = await fetch(`http://localhost:8080/api/relatorios/${id}/atividade/${atv.atvId}/historico`, {
+        headers: { 'Authorization': `Bearer ${tokenJWT}` }
+      });
+      if (res.ok) {
+        const dados = await res.json();
+        setModalHistoricoAtv({ atvId: atv.atvId, nome: atv.atividade, dados: Array.isArray(dados) ? dados : [] });
+      }
+    } catch (e) {
+      console.error("Erro ao buscar histórico da atividade:", e);
+    } finally {
+      setLoadingHistoricoAtv(false);
+    }
+  };
+
   const indexSelecionado = atividades.findIndex(
     a => atividadeSelecionada && Number(a.item) === Number(atividadeSelecionada.item) && a.atividade === atividadeSelecionada.atividade
   );
@@ -196,7 +232,7 @@ const DetalhesAuditoria = () => {
     setAtividades(novasAtividades);
   };
 
-  const gridTemplate = "60px 2fr 100px 100px 1.5fr 120px 1.5fr 60px";
+  const gridTemplate = "60px 2fr 100px 100px 1.5fr 120px 1.5fr 60px 36px";
 
   const renderizarHTML = (htmlString) => {
     if (!htmlString || htmlString.trim() === '') return <span style={{color: 'var(--text-muted)', fontStyle: 'italic'}}>Nenhum texto preenchido.</span>;
@@ -220,10 +256,6 @@ const DetalhesAuditoria = () => {
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>ID de Referência: {id}</p>
           </div>
           
-          {/* COMPONENTE DO ANEXO ALINHADO À DIREITA */}
-          <div style={{ marginLeft: 'auto' }}>
-            <BotaoAnexoLegado relatorioId={id} />
-          </div>
         </header>
 
         <section style={{ background: 'var(--bg-panel)', padding: '20px', borderRadius: '16px', boxShadow: 'var(--panel-shadow)', border: 'var(--glass-border)', marginBottom: '20px', display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 1fr', gap: '15px' }}>
@@ -246,6 +278,52 @@ const DetalhesAuditoria = () => {
           </section>
         )}
 
+        <BotaoAnexoLegado relatorioId={id} />
+
+        {historicoUnidade.length > 0 && (
+          <section style={{ background: 'var(--bg-panel)', borderRadius: '12px', boxShadow: 'var(--panel-shadow)', border: 'var(--glass-border)', marginBottom: '20px', overflow: 'hidden' }}>
+            <button
+              onClick={() => setHistoricoUnidadeAberto(v => !v)}
+              style={{ width: '100%', background: 'none', border: 'none', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: 'var(--text-bright)' }}
+            >
+              <span style={{ fontSize: '13px' }}>{historicoUnidadeAberto ? '▼' : '▶'}</span>
+              <span style={{ fontWeight: '700', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--neon-secondary)' }}>
+                Últimas auditorias desta unidade
+              </span>
+              <span style={{ marginLeft: 'auto', background: 'rgba(124,106,255,0.15)', color: 'var(--neon-secondary)', border: '1px solid rgba(124,106,255,0.3)', padding: '2px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '700' }}>
+                {historicoUnidade.length} anterior{historicoUnidade.length > 1 ? 'es' : ''}
+              </span>
+            </button>
+            {historicoUnidadeAberto && (
+              <div style={{ padding: '0 20px 16px', display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                {historicoUnidade.map((h, i) => (
+                  <div key={i} style={{ flex: '1 1 280px', background: 'var(--bg-inset)', borderRadius: '10px', border: 'var(--glass-border)', padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--neon-primary)', fontWeight: '700', fontSize: '14px' }}>{h.numero}</span>
+                      <span style={{ background: h.situacao === 'FINALIZADO' ? 'rgba(40,167,69,0.15)' : 'rgba(255,193,7,0.15)', color: h.situacao === 'FINALIZADO' ? '#28a745' : '#ffc107', border: `1px solid ${h.situacao === 'FINALIZADO' ? 'rgba(40,167,69,0.4)' : 'rgba(255,193,7,0.4)'}`, padding: '2px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: '700' }}>
+                        {h.situacao}
+                      </span>
+                    </div>
+                    <div style={{ color: 'var(--text-bright)', fontSize: '13px' }}>{h.descricao}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{h.dataInicial} — {h.dataFinal}</div>
+                    <button
+                      onClick={() => navigate(`/auditoria/${h.croId}`)}
+                      style={{ marginTop: '4px', background: 'rgba(124,106,255,0.1)', border: '1px solid rgba(124,106,255,0.35)', color: 'var(--neon-secondary)', borderRadius: '7px', padding: '6px 12px', cursor: 'pointer', fontWeight: '700', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'background 0.2s' }}
+                      onMouseOver={e => e.currentTarget.style.background = 'rgba(124,106,255,0.2)'}
+                      onMouseOut={e => e.currentTarget.style.background = 'rgba(124,106,255,0.1)'}
+                    >
+                      <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Abrir relatório
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
         <section style={{ background: 'var(--bg-panel)', borderRadius: '16px', border: 'var(--glass-border)', marginBottom: '20px', overflow: 'hidden', boxShadow: 'var(--panel-shadow)' }}>
           <div style={{ padding: '15px 20px', borderBottom: 'var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 style={{ margin: 0, color: 'var(--text-bright)' }}>Atividades do Relatório (Duplo clique para abrir)</h3>
@@ -257,7 +335,7 @@ const DetalhesAuditoria = () => {
           
           <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <div style={{ display: 'grid', gridTemplateColumns: gridTemplate, gap: '10px', padding: '12px 20px', backgroundColor: 'var(--bg-inset)', borderBottom: '2px solid var(--neon-primary)', color: 'var(--neon-primary)', fontWeight: 'bold', fontSize: '13px' }}>
-              <div>ITEM</div><div>ATIVIDADE</div><div>DT. INICIAL</div><div>DT. FINAL</div><div>REALIZADO POR</div><div>SITUAÇÃO</div><div>CLASSIFICAÇÃO</div><div>PEND.</div>
+              <div>ITEM</div><div>ATIVIDADE</div><div>DT. INICIAL</div><div>DT. FINAL</div><div>REALIZADO POR</div><div>SITUAÇÃO</div><div>CLASSIFICAÇÃO</div><div>PEND.</div><div title="Histórico">🕐</div>
             </div>
 
             <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
@@ -293,6 +371,13 @@ const DetalhesAuditoria = () => {
                         <div><span style={{ color: atv.situacao === 'F' || atv.situacao === 'C' ? '#28a745' : '#ffc107', fontWeight: 'bold' }}>{atv.situacao === 'F' || atv.situacao === 'C' ? 'FINALIZADO' : (atv.situacao === 'A' ? 'AGUARDANDO' : atv.situacao)}</span></div>
                         <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={classTexto}>{classTexto}</div>
                         <div>{atv.pendencia ? 'Sim' : 'Não'}</div>
+                        <div>
+                          <button
+                            onClick={(e) => abrirHistoricoAtividade(e, atv)}
+                            title="Ver histórico desta atividade"
+                            style={{ background: 'rgba(124,106,255,0.1)', border: '1px solid rgba(124,106,255,0.3)', color: 'var(--neon-secondary)', borderRadius: '6px', width: '28px', height: '28px', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >🕐</button>
+                        </div>
                       </div>
                     )
                   });
@@ -304,6 +389,68 @@ const DetalhesAuditoria = () => {
           </div>
         </section>
       </main>
+
+      {modalHistoricoAtv && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.75)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(3px)' }}
+          onClick={() => setModalHistoricoAtv(null)}>
+          <div style={{ background: 'var(--bg-panel)', width: '90%', maxWidth: '860px', borderRadius: '12px', border: '1px solid rgba(124,106,255,0.5)', boxShadow: '0 0 40px rgba(124,106,255,0.1)', overflow: 'hidden' }}
+            onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '18px 22px', borderBottom: 'var(--glass-border)', background: 'var(--bg-inset)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <span style={{ color: 'var(--neon-secondary)', fontWeight: '700', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Histórico da Atividade</span>
+                <div style={{ color: 'var(--text-bright)', fontSize: '14px', marginTop: '3px' }}>{modalHistoricoAtv.nome}</div>
+              </div>
+              <button onClick={() => setModalHistoricoAtv(null)} style={{ background: 'transparent', border: 'none', color: '#ff4444', fontSize: '22px', cursor: 'pointer' }}>✖</button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              {loadingHistoricoAtv ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--neon-secondary)' }}>Buscando histórico...</div>
+              ) : modalHistoricoAtv.dados.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '32px', marginBottom: '10px' }}>📭</div>
+                  <div>Nenhum registro anterior encontrado para esta atividade nesta unidade.</div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {modalHistoricoAtv.dados.map((h, i) => (
+                    <div key={i} style={{ background: 'var(--bg-inset)', borderRadius: '10px', border: 'var(--glass-border)', overflow: 'hidden' }}>
+                      <div style={{ padding: '10px 16px', background: 'rgba(124,106,255,0.07)', borderBottom: 'var(--glass-border)', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                        <span style={{ color: 'var(--neon-primary)', fontWeight: '700' }}>Relatório {h.numero}</span>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{h.dataFinal}</span>
+                        <span style={{ color: (h.situacao === 'F' || h.situacao === 'C') ? '#28a745' : '#ffc107', fontWeight: '700', fontSize: '12px' }}>
+                          {(h.situacao === 'F' || h.situacao === 'C') ? 'FINALIZADO' : (h.situacao === 'A' ? 'AGUARDANDO' : h.situacao)}
+                        </span>
+                        {h.classificacao && h.classificacao !== 'Selecione...' && (
+                          <span style={{ marginLeft: 'auto', color: 'var(--neon-secondary)', fontSize: '12px', fontWeight: '600' }}>{h.classificacao}</span>
+                        )}
+                      </div>
+                      <div style={{ padding: '12px 16px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                        {[
+                          { label: 'Observação', valor: h.observacao },
+                          { label: 'Não Conformidade', valor: h.naoConformidade },
+                          { label: 'Recomendação', valor: h.recomendacao },
+                        ].map(({ label, valor }) => (
+                          <div key={label}>
+                            <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '5px' }}>{label}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-bright)', lineHeight: '1.5' }}
+                              dangerouslySetInnerHTML={{ __html: valor || '<span style="color:var(--text-muted);font-style:italic">—</span>' }} />
+                          </div>
+                        ))}
+                      </div>
+                      {h.realizadoPor && (
+                        <div style={{ padding: '0 16px 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Realizado por:</span>
+                          <MentionTag nome={h.realizadoPor} colCodigo={h.colCodigo} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {isModalOpen && atividadeSelecionada && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(3px)' }}>

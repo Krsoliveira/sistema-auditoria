@@ -4,6 +4,7 @@ import br.com.siai.auditoria_backend.model.Relatorio;
 import br.com.siai.auditoria_backend.model.DashboardDTO;
 import br.com.siai.auditoria_backend.model.CabecalhoDTO;
 import br.com.siai.auditoria_backend.model.ColaboradorSimpleDTO;
+import br.com.siai.auditoria_backend.model.HistoricoRelatorioDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -187,4 +188,22 @@ public interface RelatorioRepository extends JpaRepository<Relatorio, Integer> {
         WHERE r.croId = :croId
     """, nativeQuery = true)
     List<ColaboradorSimpleDTO> buscarColaboradoresPorCroId(@Param("croId") Integer croId);
+
+    // HISTÓRICO: últimos 2 relatórios da mesma unidade (excluindo o atual)
+    @Query(value = """
+        SELECT TOP 2
+            c2.croId AS croId,
+            r2.relNumero AS numero,
+            r2.relDescricao AS descricao,
+            CONVERT(VARCHAR(10), c2.croDataInicialR, 103) AS dataInicial,
+            CONVERT(VARCHAR(10), c2.croDataFinalR, 103) AS dataFinal,
+            c2.croSituacao AS situacao
+        FROM Cronograma c2
+        JOIN Relatorio r2 ON c2.croId = r2.croId
+        WHERE c2.uniId = (SELECT uniId FROM Cronograma WHERE croId = :croId)
+          AND c2.croId < :croId
+          AND r2.relNumero IS NOT NULL AND r2.relNumero <> ''
+        ORDER BY c2.croId DESC
+    """, nativeQuery = true)
+    List<HistoricoRelatorioDTO> buscarHistoricoUnidade(@Param("croId") Integer croId);
 }
